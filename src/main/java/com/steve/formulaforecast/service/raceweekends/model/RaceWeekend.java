@@ -1,0 +1,77 @@
+package com.steve.formulaforecast.service.raceweekends.model;
+
+import com.neovisionaries.i18n.CountryCode;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+public class RaceWeekend {
+
+    private final RaceName raceName;
+    private final CountryCode raceLocation;
+    private final List<PracticeSession> practiceSessions;
+    private final Qualifying qualifying;
+    private final Sprint sprint;
+    private final Race race;
+    private final RaceWeekendStatus raceWeekendStatus;
+    private final LocalDate raceWeekendStartDate;
+    private final LocalDate raceWeekendEndDate;
+
+    public RaceWeekend(
+            RaceName raceName,
+            CountryCode raceLocation,
+            List<PracticeSession> practiceSessions,
+            Qualifying qualifying,
+            Sprint sprint,
+            Race race,
+            LocalDate raceWeekendStartDate,
+            LocalDate raceWeekendEndDate,
+            RaceWeekendStatus raceWeekendStatus) {
+        this.raceName = raceName;
+        this.raceLocation = raceLocation;
+        this.practiceSessions = practiceSessions;
+        this.qualifying = qualifying;
+        this.sprint = sprint;
+        this.race = race;
+        this.raceWeekendStatus = raceWeekendStatus;
+        this.raceWeekendStartDate = raceWeekendStartDate;
+        this.raceWeekendEndDate = raceWeekendEndDate;
+    }
+
+    public RaceName raceName() {
+        return raceName;
+    }
+
+    public CountryCode raceLocation() {
+        return raceLocation;
+    }
+
+    public List<PracticeSession> practiceSessions() {
+        return practiceSessions;
+    }
+
+    public Qualifying qualifying() {
+        return qualifying;
+    }
+
+    public Optional<Sprint> sprint() {
+        return Optional.ofNullable(sprint);
+    }
+
+    public Race race() {
+        return race;
+    }
+
+    public RaceWeekendStatus getRaceWeekendStatus() {
+        return raceWeekendStatus;
+    }
+
+    public LocalDate raceWeekendStartDate() {
+        return raceWeekendStartDate;
+    }
+
+    public LocalDate raceWeekendEndDate() {
+        return raceWeekendEndDate;
+    }
+}
