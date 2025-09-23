@@ -57,6 +57,7 @@ public class RacesResource {
 
     private RaceWeekendResponse toDto(RaceWeekend raceWeekend) {
         return new RaceWeekendResponse(
+                raceWeekend.getRaceWeekendUid(),
                 raceWeekend.raceName().name(),
                 raceWeekend.raceLocation().getName(),
                 raceWeekend.practiceSessions().stream().map(this::toPracticeDto).toList(),

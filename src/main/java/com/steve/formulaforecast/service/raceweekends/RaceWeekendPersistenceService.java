@@ -75,6 +75,7 @@ public class RaceWeekendPersistenceService {
         Race race = raceWeekendRaceRepository.selectRaceSessionForRaceWeekend(raceWeekendEntity.raceWeekendUid()).map(this::toRaceModel). orElseThrow();
         LOGGER.info("Found race session=[{}] for raceWeekendEntity=[{}] raceName=[{}]", race.raceSessionUid(), raceWeekendEntity.raceWeekendUid(), raceWeekendEntity.raceName());
         return new RaceWeekend(
+                raceWeekendEntity.raceWeekendUid(),
                 raceWeekendEntity.raceName(),
                 raceWeekendEntity.raceLocation(),
                 practiceSessions,

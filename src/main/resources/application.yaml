@@ -18,3 +18,8 @@ spring:
     user: formulaforecast
     password: formulaforecast
     driver-class-name: org.postgresql.Driver
+
+  security:
+    jwt:
+      secret-key: ac3af2fb1d2b58e9bcf0ddd6815804ca047ed64222c64aad76bb223b9112ec91
+      expiration-time: 3600000

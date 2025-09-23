@@ -7,8 +7,8 @@ CREATE TABLE race_weekend_current_status (
 
     CONSTRAINT pk_race_weekend_current_status_id PRIMARY KEY (id),
     CONSTRAINT fk_race_weekend_current_status_race_weekend_id FOREIGN KEY(race_weekend_id) REFERENCES race_weekend(id),
-    CONSTRAINT uk_race_weekend_current_status_race_weekend_status_uid UNIQUE (race_weekend_status_uid),
-    CONSTRAINT uk_race_weekend_current_status_race_weekend_id_status UNIQUE (race_weekend_id, status)
+    CONSTRAINT uk_race_weekend_current_status_race_weekend_id_status UNIQUE (race_weekend_id),
+    CONSTRAINT uk_race_weekend_current_status_race_weekend_status_uid UNIQUE (race_weekend_status_uid)
 );
 
 CREATE TABLE race_weekend_status_history (

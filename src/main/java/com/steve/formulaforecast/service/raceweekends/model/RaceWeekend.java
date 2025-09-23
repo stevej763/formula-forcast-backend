@@ -5,9 +5,11 @@ import com.neovisionaries.i18n.CountryCode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class RaceWeekend {
 
+    private final UUID raceWeekendUid;
     private final RaceName raceName;
     private final CountryCode raceLocation;
     private final List<PracticeSession> practiceSessions;
@@ -19,6 +21,7 @@ public class RaceWeekend {
     private final LocalDate raceWeekendEndDate;
 
     public RaceWeekend(
+            UUID raceWeekendUid,
             RaceName raceName,
             CountryCode raceLocation,
             List<PracticeSession> practiceSessions,
@@ -28,6 +31,7 @@ public class RaceWeekend {
             LocalDate raceWeekendStartDate,
             LocalDate raceWeekendEndDate,
             RaceWeekendStatus raceWeekendStatus) {
+        this.raceWeekendUid = raceWeekendUid;
         this.raceName = raceName;
         this.raceLocation = raceLocation;
         this.practiceSessions = practiceSessions;
@@ -37,6 +41,10 @@ public class RaceWeekend {
         this.raceWeekendStatus = raceWeekendStatus;
         this.raceWeekendStartDate = raceWeekendStartDate;
         this.raceWeekendEndDate = raceWeekendEndDate;
+    }
+
+    public UUID getRaceWeekendUid() {
+        return raceWeekendUid;
     }
 
     public RaceName raceName() {

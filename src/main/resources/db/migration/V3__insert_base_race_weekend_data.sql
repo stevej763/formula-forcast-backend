@@ -50,7 +50,7 @@ INSERT INTO public.race_weekend (race_weekend_uid, race_name, race_location, rac
     VALUES ('1c010095-f124-4984-bee2-531d63980af0', 'AZERBAIJAN', 'AZ', '2025-9-19', '2025-9-21');
 
 INSERT INTO public.race_weekend (race_weekend_uid, race_name, race_location, race_weekend_start_date, race_weekend_end_date)
-    VALUES ('95e4610f-a56f-4efe-b907-0cea3986c159', 'SINGAPORE', 'SG', '2025-9-3', '2025-9-5');
+    VALUES ('95e4610f-a56f-4efe-b907-0cea3986c159', 'SINGAPORE', 'SG', '2025-10-3', '2025-10-5');
 
 INSERT INTO public.race_weekend (race_weekend_uid, race_name, race_location, race_weekend_start_date, race_weekend_end_date)
     VALUES ('6eca2b46-d994-4fbd-8438-3fc4dcfe32ca', 'UNITED_STATES', 'US', '2025-10-17', '2025-10-19');

@@ -15,7 +15,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = "/api/v1/driver", produces = APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "*")
 public class DriverResource {
 
     private final DriverDetailsService driverDetailsService;
