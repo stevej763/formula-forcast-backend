@@ -17,7 +17,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = "/api/v1/race-weekend", produces = APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "*")
 public class RacesResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RacesResource.class);

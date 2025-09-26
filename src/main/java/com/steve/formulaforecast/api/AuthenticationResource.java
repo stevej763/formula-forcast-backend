@@ -1,9 +1,9 @@
 package com.steve.formulaforecast.api;
 
+import com.steve.formulaforecast.api.model.account.AccountDetailsResponseDto;
 import com.steve.formulaforecast.api.model.account.creation.AccountCreationRequestDto;
 import com.steve.formulaforecast.api.model.account.creation.AccountCreationResponseDto;
 import com.steve.formulaforecast.api.model.account.login.AccountLoginRequestDto;
-import com.steve.formulaforecast.api.model.account.login.AccountLoginResponseDto;
 import com.steve.formulaforecast.persistence.entity.account.AccountAuthenticationUserDetailsEntity;
 import com.steve.formulaforecast.service.Account.model.Account;
 import com.steve.formulaforecast.service.authentication.AuthenticationService;
@@ -68,8 +68,8 @@ public class AuthenticationResource {
 
     @DeleteMapping("/logout")
     public void logout(HttpServletResponse response, Authentication authentication) {
-        Cookie identityCookie = emptyCookie();
-        response.addCookie(identityCookie);
+        Cookie emptyCookie = emptyCookie();
+        response.addCookie(emptyCookie);
         logUserLoggedOut(authentication);
     }
 
@@ -102,11 +102,16 @@ public class AuthenticationResource {
 
     @GetMapping("/current-user")
     public ResponseEntity<AccountDetailsResponseDto> getCurrentAuthenticatedUser(Authentication authentication) {
-        AccountAuthenticationUserDetailsEntity principal = (AccountAuthenticationUserDetailsEntity) authentication.getPrincipal();
-        LOGGER.info("Got info from authenticated user=[{}]", principal);
-        if (isNull(principal)) {
-            throw new RuntimeException();
+        if (isNull(authentication)) {
+            LOGGER.info("No existing authentication");
+            return ResponseEntity.ok(AccountDetailsResponseDto.unauthenticated());
         }
-        return ResponseEntity.ok(new AccountDetailsResponseDto(principal.accountUid(), principal.firstName(), principal.lastName(), principal.email(), principal.phoneNumber(), true));
+        AccountAuthenticationUserDetailsEntity principal = (AccountAuthenticationUserDetailsEntity) authentication.getPrincipal();
+        if (nonNull(principal)) {
+            LOGGER.info("Got info from authenticated user=[{}]", principal.accountUid());
+            return ResponseEntity.ok(new AccountDetailsResponseDto(principal.accountUid(), principal.firstName(), principal.lastName(), principal.email(), principal.phoneNumber(), true));
+        }
+        return ResponseEntity.ok(AccountDetailsResponseDto.unauthenticated());
+
     }
 }

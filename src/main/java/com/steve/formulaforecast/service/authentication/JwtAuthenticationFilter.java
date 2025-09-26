@@ -54,17 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
         if (Objects.isNull(cookies)) {
-            LOGGER.info("No cookies provided");
             filterChain.doFilter(request, response);
             return;
         }
 
-        Optional<Cookie> accessTokenCookie = Arrays.stream(cookies).filter(cookie -> {
-            LOGGER.info("Received cookie name=[{}] value=[{}]", cookie.getName(), cookie.getValue());
-            return "AccessToken".equals(cookie.getName());
-        }).findFirst();
-
-        LOGGER.info("attempting auth for token");
+        Optional<Cookie> accessTokenCookie = Arrays.stream(cookies).filter(cookie -> "AccessToken".equals(cookie.getName())).findFirst();
         if (accessTokenCookie.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
@@ -73,7 +67,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String jwt = accessTokenCookie.get().getValue();
             final String userEmail = jwtService.extractUsername(jwt);
-
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (userEmail != null && authentication == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
@@ -94,9 +87,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             LOGGER.info("Exception thrown=[{}]", exception.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
-    }
-
-    private static void logUserLoggingIn(Authentication authentication) {
-        AccountAuthenticationUserDetailsEntity principal = (AccountAuthenticationUserDetailsEntity) authentication.getPrincipal();
     }
 }

@@ -1,6 +1,7 @@
 server:
   address: 0.0.0.0
   port: 8080
+  host: steve-think
 
 spring:
   application:
@@ -23,3 +24,7 @@ spring:
     jwt:
       secret-key: ac3af2fb1d2b58e9bcf0ddd6815804ca047ed64222c64aad76bb223b9112ec91
       expiration-time: 3600000
+
+
+  quartz:
+    job-store-type: memory

@@ -40,10 +40,15 @@ public class AuthenticationService {
     public Account authenticateAccount(AccountLoginRequest accountLoginRequest) {
         UsernamePasswordAuthenticationToken request = new UsernamePasswordAuthenticationToken(
                 accountLoginRequest.getEmail(), accountLoginRequest.getPassword());
-        LOGGER.info("Authenticating");
-        Authentication authResult = authenticationManager.authenticate(request);
-        LOGGER.info("Authenticated: {}", authResult.isAuthenticated());
-        return accountPersistenceService.getAccountByEmail(accountLoginRequest.getEmail())
-                .orElseThrow();
+        LOGGER.info("Authenticating request=[{}]", request);
+        try {
+            Authentication authResult = authenticationManager.authenticate(request);
+            LOGGER.info("Authenticated: {}", authResult.isAuthenticated());
+            return accountPersistenceService.getAccountByEmail(accountLoginRequest.getEmail())
+                    .orElseThrow();
+        } catch (Exception e) {
+            LOGGER.error("Exception when authenticating:", e);
+        }
+       throw new RuntimeException();
     }
 }

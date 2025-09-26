@@ -38,7 +38,6 @@ public class RaceWeekendPersistenceService {
     @Transactional
     public List<RaceWeekend> getAllRaceWeekends() {
         List<RaceWeekendEntity> raceWeekendEntityStream = raceWeekendRepository.selectAllRaceWeekends().toList();
-        LOGGER.info("Found [{}] race weekends", raceWeekendEntityStream.size());
         return raceWeekendEntityStream
                 .stream()
                 .map(this::mapToModel)
@@ -61,19 +60,13 @@ public class RaceWeekendPersistenceService {
     }
 
     private RaceWeekend mapToModel(RaceWeekendEntity raceWeekendEntity) {
-        LOGGER.info("Mapping race weekend [{}] to model", raceWeekendEntity.raceName());
         List<PracticeSession> practiceSessions = raceWeekendPracticeRepository.selectPracticeSessionsForRaceWeekend(raceWeekendEntity.raceWeekendUid()).map(this::toPracticeSession).toList();
 
-        LOGGER.info("Found practice sessions=[{}] for raceWeekendEntity=[{}] raceName=[{}]", practiceSessions.size(), raceWeekendEntity.raceWeekendUid(), raceWeekendEntity.raceName());
         Qualifying qualifying = raceWeekendQualifyingRepository.selectQualifyingSessionForRaceWeekend(raceWeekendEntity.raceWeekendUid()).map(this::toQualiSession).orElseThrow();
-        LOGGER.info("Found qualifying session=[{}] for raceWeekendEntity=[{}] raceName=[{}]", qualifying.qualifyingSessionUid(), raceWeekendEntity.raceWeekendUid(), raceWeekendEntity.raceName());
 
         Optional<Sprint> sprint = raceWeekendSprintRepository.selectSprintSessionForRaceWeekend(raceWeekendEntity.raceWeekendUid()).map(this::toSprintSession);
-        sprint.ifPresentOrElse(sprintWeekend -> LOGGER.info("Found sprint session=[{}] for raceWeekendEntity=[{}] raceName=[{}]", sprintWeekend.sprintSessionUid(), raceWeekendEntity.raceWeekendUid(), raceWeekendEntity.raceName()),
-                () -> LOGGER.info("No sprint session found for raceWeekendEntity=[{}] raceName=[{}]", raceWeekendEntity.raceWeekendUid(), raceWeekendEntity.raceName()));
 
         Race race = raceWeekendRaceRepository.selectRaceSessionForRaceWeekend(raceWeekendEntity.raceWeekendUid()).map(this::toRaceModel). orElseThrow();
-        LOGGER.info("Found race session=[{}] for raceWeekendEntity=[{}] raceName=[{}]", race.raceSessionUid(), raceWeekendEntity.raceWeekendUid(), raceWeekendEntity.raceName());
         return new RaceWeekend(
                 raceWeekendEntity.raceWeekendUid(),
                 raceWeekendEntity.raceName(),
