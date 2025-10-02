@@ -29,6 +29,12 @@ public class DriverResource {
         return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
     }
 
+    @GetMapping("/current-season")
+    public ResponseEntity<DriverDetailsResponse> getCurrentSeasonDrivers() {
+        List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getAllDriversForCurrentSeason().stream().map(this::toDto).toList();
+        return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
+    }
+
     @GetMapping("/{driverUid}")
     public ResponseEntity<DriverDetailResponse> getDriver(@PathVariable UUID driverUid) {
         Optional<DriverDetailResponse> driverDetailResponses = driverDetailsService.getDriver(driverUid).map(this::toDto);

@@ -1,5 +1,6 @@
-package com.steve.formulaforecast.job;
+package com.steve.formulaforecast.job.config;
 
+import com.steve.formulaforecast.job.ActiveRaceWeekendScheduledJob;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
@@ -22,12 +23,13 @@ public class JobConfiguration {
     }
 
     @Bean
-    public Trigger trigger(JobDetail activeRaceWeekendScheduledJobDetail) {
+    public Trigger activeRaceWeekendScheduledJobDetailTrigger(JobDetail activeRaceWeekendScheduledJobDetail) {
         return TriggerBuilder.newTrigger()
                 .forJob(activeRaceWeekendScheduledJobDetail)
                 .withIdentity("ActiveRaceWeekendScheduledJobIdentity")
                 .withDescription(ActiveRaceWeekendScheduledJob.class.getAnnotation(JobIdentifier.class).value() + "Trigger")
-                .withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(1))
+                .withSchedule(simpleSchedule().repeatForever().withIntervalInMinutes(1))
                 .build();
     }
+
 }

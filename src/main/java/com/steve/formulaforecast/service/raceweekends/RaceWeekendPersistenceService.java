@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.InstantSource;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,18 +23,31 @@ public class RaceWeekendPersistenceService {
     private final RaceWeekendQualifyingRepository raceWeekendQualifyingRepository;
     private final RaceWeekendRaceRepository raceWeekendRaceRepository;
     private final RaceWeekendSprintRepository raceWeekendSprintRepository;
+    private final InstantSource instantSource;
 
     RaceWeekendPersistenceService(
             RaceWeekendRepository raceWeekendRepository,
             RaceWeekendPracticeRepository raceWeekendPracticeRepository,
             RaceWeekendQualifyingRepository raceWeekendQualifyingRepository,
             RaceWeekendRaceRepository raceWeekendRaceRepository,
-            RaceWeekendSprintRepository raceWeekendSprintRepository) {
+            RaceWeekendSprintRepository raceWeekendSprintRepository,
+            InstantSource instantSource) {
         this.raceWeekendRepository = raceWeekendRepository;
         this.raceWeekendPracticeRepository = raceWeekendPracticeRepository;
         this.raceWeekendQualifyingRepository = raceWeekendQualifyingRepository;
         this.raceWeekendRaceRepository = raceWeekendRaceRepository;
         this.raceWeekendSprintRepository = raceWeekendSprintRepository;
+        this.instantSource = instantSource;
+    }
+
+    @Transactional
+    public List<RaceWeekend> getAllRaceWeekendsForSeason(UUID seasonUid) {
+        List<RaceWeekendEntity> raceWeekendEntityStream = raceWeekendRepository.selectAllRaceWeekendsForSeason(seasonUid).toList();
+        return raceWeekendEntityStream
+                .stream()
+                .map(this::mapToModel)
+                .toList();
+
     }
 
     @Transactional
@@ -50,6 +65,11 @@ public class RaceWeekendPersistenceService {
     }
 
     @Transactional
+    public Optional<RaceWeekend> getLiveRaceWeekend() {
+        return raceWeekendRepository.selectLiveRaceWeekend().map(this::mapToModel);
+    }
+
+    @Transactional
     public Optional<RaceWeekend> getCurrentRaceWeekend() {
         return raceWeekendRepository.selectCurrentRaceWeekend().map(this::mapToModel);
     }
@@ -57,6 +77,13 @@ public class RaceWeekendPersistenceService {
     @Transactional
     public Optional<RaceWeekend> getNextRaceWeekend() {
         return raceWeekendRepository.selectNextRaceWeekend().map(this::mapToModel);
+    }
+
+    @Transactional
+    public void updateRaceWeekendStatus(UUID raceWeekendUid, RaceWeekendState raceWeekendState) {
+        Instant eventTime = instantSource.instant();
+        raceWeekendRepository.updateRaceWeekendCurrentStatus(raceWeekendUid, eventTime, raceWeekendState);
+        raceWeekendRepository.updateRaceWeekendStatusHistory(raceWeekendUid, raceWeekendState, eventTime);
     }
 
     private RaceWeekend mapToModel(RaceWeekendEntity raceWeekendEntity) {

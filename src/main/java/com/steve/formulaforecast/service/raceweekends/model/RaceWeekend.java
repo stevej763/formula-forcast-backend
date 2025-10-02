@@ -47,27 +47,27 @@ public class RaceWeekend {
         return raceWeekendUid;
     }
 
-    public RaceName raceName() {
+    public RaceName getRaceName() {
         return raceName;
     }
 
-    public CountryCode raceLocation() {
+    public CountryCode getRaceLocation() {
         return raceLocation;
     }
 
-    public List<PracticeSession> practiceSessions() {
+    public List<PracticeSession> getPracticeSessions() {
         return practiceSessions;
     }
 
-    public Qualifying qualifying() {
+    public Qualifying getQualifying() {
         return qualifying;
     }
 
-    public Optional<Sprint> sprint() {
+    public Optional<Sprint> getSprint() {
         return Optional.ofNullable(sprint);
     }
 
-    public Race race() {
+    public Race getRace() {
         return race;
     }
 
@@ -75,11 +75,11 @@ public class RaceWeekend {
         return raceWeekendStatus;
     }
 
-    public LocalDate raceWeekendStartDate() {
+    public LocalDate getRaceWeekendStartDate() {
         return raceWeekendStartDate;
     }
 
-    public LocalDate raceWeekendEndDate() {
+    public LocalDate getRaceWeekendEndDate() {
         return raceWeekendEndDate;
     }
 }

@@ -1,4 +1,4 @@
-package com.steve.formulaforecast.job;
+package com.steve.formulaforecast.job.config;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

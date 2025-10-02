@@ -29,11 +29,18 @@ public class RaceWeekendDetailsService {
         return raceWeekendPersistenceService.getRaceWeekend(raceWeekendUid);
     }
 
+    @Transactional
     public Optional<RaceWeekend> getRaceCurrentWeekend() {
         return raceWeekendPersistenceService.getCurrentRaceWeekend();
     }
 
+    @Transactional
     public Optional<RaceWeekend> getNextRaceWeekend() {
         return raceWeekendPersistenceService.getNextRaceWeekend();
+    }
+
+    @Transactional
+    public Optional<RaceWeekend> getLiveRaceWeekend() {
+        return raceWeekendPersistenceService.getLiveRaceWeekend();
     }
 }

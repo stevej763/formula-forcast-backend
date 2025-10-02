@@ -19,7 +19,7 @@ public interface DriverRepository extends Repository<DriverEntity, Long> {
 
     @Query("""
             SELECT driver_uid, first_name, last_name, nickname
-            FROM race_weekend
+            FROM driver
             WHERE driver_uid = :driverUid
             """)
     Optional<DriverEntity> selectDriver(UUID driverUid);

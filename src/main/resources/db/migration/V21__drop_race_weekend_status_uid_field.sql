@@ -1,0 +1,2 @@
+ALTER TABLE race_weekend_current_status DROP COLUMN race_weekend_status_uid;
+ALTER TABLE race_weekend_status_history DROP COLUMN race_weekend_status_uid;

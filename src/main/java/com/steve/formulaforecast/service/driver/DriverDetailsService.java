@@ -23,4 +23,9 @@ public class DriverDetailsService {
     public Optional<DriverDetails> getDriver(UUID driverUid) {
         return driverDetailsPersistenceService.getDriverByUid(driverUid);
     }
+
+    @Transactional
+    public List<DriverDetails> getAllDriversForCurrentSeason() {
+        return null;
+    }
 }

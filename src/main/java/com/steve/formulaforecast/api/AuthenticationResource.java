@@ -52,6 +52,7 @@ public class AuthenticationResource {
                 passwordEncoder.encode(accountCreationRequestDto.password()));
         LOGGER.info("Account creation request received");
         Account registeredUser = authenticationService.createAccount(accountCreationRequest);
+        LOGGER.info("account created accountUid=[{}] email=[{}]", registeredUser.getAccountUid(), registeredUser.getEmail());
         return ResponseEntity.ok(new AccountCreationResponseDto(registeredUser.getAccountUid()));
     }
 

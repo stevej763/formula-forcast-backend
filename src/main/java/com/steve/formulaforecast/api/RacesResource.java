@@ -47,6 +47,13 @@ public class RacesResource {
         return ResponseEntity.ok(new CurrentRaceWeekendResponse(raceWeekendResponse.orElse(null)));
     }
 
+    @GetMapping("/live")
+    public ResponseEntity<LiveRaceWeekendResponse> getLiveRaceWeekend() {
+        LOGGER.info("finding live race weekend");
+        Optional<RaceWeekendResponse> raceWeekendResponse = raceWeekendDetailsService.getLiveRaceWeekend().map(this::toDto);
+        return ResponseEntity.ok(new LiveRaceWeekendResponse(raceWeekendResponse.orElse(null)));
+    }
+
     @GetMapping("/next")
     public ResponseEntity<NextRaceWeekendResponse> getNextRaceWeekend() {
         LOGGER.info("searching for upcoming race weekend");
@@ -57,14 +64,14 @@ public class RacesResource {
     private RaceWeekendResponse toDto(RaceWeekend raceWeekend) {
         return new RaceWeekendResponse(
                 raceWeekend.getRaceWeekendUid(),
-                raceWeekend.raceName().name(),
-                raceWeekend.raceLocation().getName(),
-                raceWeekend.practiceSessions().stream().map(this::toPracticeDto).toList(),
-                toQualiResponse(raceWeekend.qualifying()),
-                raceWeekend.sprint().map(this::toSprintResponse).orElse(null),
-                toRaceResponse(raceWeekend.race()),
-                raceWeekend.raceWeekendStartDate(),
-                raceWeekend.raceWeekendEndDate(),
+                raceWeekend.getRaceName().name(),
+                raceWeekend.getRaceLocation().getName(),
+                raceWeekend.getPracticeSessions().stream().map(this::toPracticeDto).toList(),
+                toQualiResponse(raceWeekend.getQualifying()),
+                raceWeekend.getSprint().map(this::toSprintResponse).orElse(null),
+                toRaceResponse(raceWeekend.getRace()),
+                raceWeekend.getRaceWeekendStartDate(),
+                raceWeekend.getRaceWeekendEndDate(),
                 raceWeekend.getRaceWeekendStatus().getRaceWeekendState().name(),
                 raceWeekend.getRaceWeekendStatus().getEventTime()
         );

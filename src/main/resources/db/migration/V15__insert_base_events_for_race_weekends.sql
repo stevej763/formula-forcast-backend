@@ -74,14 +74,14 @@ INSERT INTO public.race_weekend_current_status(race_weekend_status_uid, race_wee
     VALUES('f11c8ecc-7faa-487f-a328-d04540ae206d', 15, '2025-09-08T20:55:15+00:00', 'COMPLETE');
 
 INSERT INTO public.race_weekend_status_history(race_weekend_status_uid, race_weekend_id, event_time, status)
-    VALUES ('dda59a12-c76f-4066-b6f9-0f00b52763a2', 16, '2025-09-08T20:55:15+00:00', 'RACE_WEEK');
+    VALUES ('dda59a12-c76f-4066-b6f9-0f00b52763a2', 16, '2025-09-08T20:55:15+00:00', 'COMPLETE');
 INSERT INTO public.race_weekend_current_status(race_weekend_status_uid, race_weekend_id, event_time, status)
-    VALUES('dda59a12-c76f-4066-b6f9-0f00b52763a2', 16, '2025-09-08T20:55:15+00:00', 'RACE_WEEK');
+    VALUES('dda59a12-c76f-4066-b6f9-0f00b52763a2', 16, '2025-09-08T20:55:15+00:00', 'COMPLETE');
 
 INSERT INTO public.race_weekend_status_history(race_weekend_status_uid, race_weekend_id, event_time, status)
-    VALUES ('78920b3d-864b-422b-8789-00b584bed61a', 17, '2025-09-08T20:55:15+00:00', 'UPCOMING');
+    VALUES ('78920b3d-864b-422b-8789-00b584bed61a', 17, '2025-09-08T20:55:15+00:00', 'COMPLETE');
 INSERT INTO public.race_weekend_current_status(race_weekend_status_uid, race_weekend_id, event_time, status)
-    VALUES('78920b3d-864b-422b-8789-00b584bed61a', 17, '2025-09-08T20:55:15+00:00', 'UPCOMING');
+    VALUES('78920b3d-864b-422b-8789-00b584bed61a', 17, '2025-09-08T20:55:15+00:00', 'COMPLETE');
 
 INSERT INTO public.race_weekend_status_history(race_weekend_status_uid, race_weekend_id, event_time, status)
     VALUES ('d434d41d-86bc-49bb-ad6a-cfd9e2270c72', 18, '2025-09-08T20:55:15+00:00', 'UPCOMING');
