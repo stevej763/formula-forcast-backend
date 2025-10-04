@@ -54,6 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
         if (Objects.isNull(cookies)) {
+            LOGGER.info("No cookies provided in request");
             filterChain.doFilter(request, response);
             return;
         }

@@ -34,11 +34,13 @@ public class AuthenticationResource {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthCookieProperties authCookieConfig;
 
-    AuthenticationResource(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder) {
+    AuthenticationResource(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, AuthCookieProperties authCookieConfig) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
+        this.authCookieConfig = authCookieConfig;
     }
 
     @PostMapping("/create-account")
@@ -85,19 +87,23 @@ public class AuthenticationResource {
 
     private Cookie emptyCookie() {
         Cookie emptyCookie = new Cookie("AccessToken", "");
-        emptyCookie.setHttpOnly(true);              // cannot be accessed by JS
-        emptyCookie.setSecure(true);                // send only over HTTPS (disable in local dev if needed)
-        emptyCookie.setPath("/");                   // cookie is valid for entire domain
-        emptyCookie.setMaxAge(0); // expiration in seconds
+        emptyCookie.setDomain(authCookieConfig.getDomain());
+        emptyCookie.setHttpOnly(authCookieConfig.httpOnly());
+        emptyCookie.setSecure(authCookieConfig.isSecure());
+        emptyCookie.setPath("/");
+        emptyCookie.setAttribute("SameSite", authCookieConfig.sameSite());
+        emptyCookie.setMaxAge(0);
         return emptyCookie;
     }
 
-    private Cookie createAccessTokenCookie(String jwtToken) {
-        Cookie identityCookie = new Cookie("AccessToken", jwtToken);
-        identityCookie.setHttpOnly(true);              // cannot be accessed by JS
-        identityCookie.setSecure(true);                // send only over HTTPS (disable in local dev if needed)
-        identityCookie.setPath("/");                   // cookie is valid for entire domain
-        identityCookie.setMaxAge((int) (jwtService.getExpirationTime() / 1000)); // expiration in seconds
+    private Cookie createAccessTokenCookie(String accessToken) {
+        Cookie identityCookie = new Cookie("AccessToken", accessToken);
+        identityCookie.setDomain(authCookieConfig.getDomain());
+        identityCookie.setHttpOnly(authCookieConfig.httpOnly());
+        identityCookie.setSecure(authCookieConfig.isSecure());
+        identityCookie.setPath("/");
+        identityCookie.setAttribute("SameSite", authCookieConfig.sameSite());
+        identityCookie.setMaxAge((int) (jwtService.getExpirationTime() / 1000));
         return identityCookie;
     }
 

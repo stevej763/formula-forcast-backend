@@ -31,7 +31,5 @@ spring:
 
 auth:
   cookies:
-    domain: localhost
     secure: true
     same-site: None
-    http-only: true
