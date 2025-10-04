@@ -22,9 +22,8 @@ spring:
 
   security:
     jwt:
-      secret-key: supersecretkey
+      secret-key: b6da931746c9a667f8fc580403073154ee1b434b2502345f710ca6a0923cf173
       expiration-time: 3600000
-
 
   quartz:
     job-store-type: memory

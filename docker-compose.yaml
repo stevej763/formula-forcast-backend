@@ -2,31 +2,38 @@
 
 services:
   app:
-    image: formulaforecast
+    image: formulaforecast-bankend:latest
     container_name: formulaforecast-backend
     ports:
        - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: ${ENV}
       DB_HOST: formulaforecast-db
-      DB_PORT: 5432
-      DB_NAME: formulaforecast
-      DB_USER: formulaforecast
-      DB_PASSWORD: formulaforecast
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     depends_on:
       - db
-
+  web:
+    image: formulaforecast-frontend:latest
+    container_name: formulaforecast-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - app
   db:
     image: postgres:16
     container_name: formulaforecast-db
     environment:
-      POSTGRES_DB: formulaforecast
-      POSTGRES_USER: formulaforecast
-      POSTGRES_PASSWORD: formulaforecast
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
     restart: unless-stopped
 
 volumes:
