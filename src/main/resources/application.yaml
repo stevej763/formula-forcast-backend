@@ -1,23 +1,22 @@
 server:
   address: 0.0.0.0
   port: 8080
-  host: steve-think
 
 spring:
   application:
     name: formulaforecast
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/formulaforecast
+    url: jdbc:postgresql://formulaforecastdemo.cv2wkmkwm2lk.eu-west-2.rds.amazonaws.com/formulaforecast
     username: formulaforecast
-    password: formulaforecast
+    password: Ec3z75bXWUgrw3eoGv1z
     driver-class-name: org.postgresql.Driver
 
   flyway:
     default-schema: public
-    url: jdbc:postgresql://localhost:5432/formulaforecast
+    url: jdbc:postgresql://formulaforecastdemo.cv2wkmkwm2lk.eu-west-2.rds.amazonaws.com/formulaforecast
     user: formulaforecast
-    password: formulaforecast
+    password: Ec3z75bXWUgrw3eoGv1z
     driver-class-name: org.postgresql.Driver
 
   security:

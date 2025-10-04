@@ -85,7 +85,7 @@ public class AuthenticationResource {
 
     private Cookie emptyCookie() {
         Cookie emptyCookie = new Cookie("AccessToken", "");
-        emptyCookie.setHttpOnly(true);              // cannot be accessed by JS
+	emptyCookie.setHttpOnly(true);              // cannot be accessed by JS
         emptyCookie.setSecure(true);                // send only over HTTPS (disable in local dev if needed)
         emptyCookie.setPath("/");                   // cookie is valid for entire domain
         emptyCookie.setMaxAge(0); // expiration in seconds
@@ -94,9 +94,11 @@ public class AuthenticationResource {
 
     private Cookie createAccessTokenCookie(String jwtToken) {
         Cookie identityCookie = new Cookie("AccessToken", jwtToken);
-        identityCookie.setHttpOnly(true);              // cannot be accessed by JS
+        identityCookie.setDomain("formulaforecast.com");
+	identityCookie.setHttpOnly(true);              // cannot be accessed by JS
         identityCookie.setSecure(true);                // send only over HTTPS (disable in local dev if needed)
         identityCookie.setPath("/");                   // cookie is valid for entire domain
+	identityCookie.setAttribute("SameSite", "None"); 					       // 
         identityCookie.setMaxAge((int) (jwtService.getExpirationTime() / 1000)); // expiration in seconds
         return identityCookie;
     }
