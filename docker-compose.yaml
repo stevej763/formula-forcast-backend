@@ -1,0 +1,33 @@
+#docker-compose setup
+
+services:
+  app:
+    image: formulaforecast
+    container_name: formulaforecast-backend
+    ports:
+       - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: formulaforecast-db
+      DB_PORT: 5432
+      DB_NAME: formulaforecast
+      DB_USER: formulaforecast
+      DB_PASSWORD: formulaforecast
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    container_name: formulaforecast-db
+    environment:
+      POSTGRES_DB: formulaforecast
+      POSTGRES_USER: formulaforecast
+      POSTGRES_PASSWORD: formulaforecast
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
