@@ -1,4 +1,4 @@
-package com.steve.formulaforecast.persistence;
+package com.steve.formulaforecast.persistence.entity;
 
 import java.util.UUID;
 
