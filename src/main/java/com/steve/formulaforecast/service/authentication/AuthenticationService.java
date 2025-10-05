@@ -37,6 +37,11 @@ public class AuthenticationService {
         return accountPersistenceService.getAccountByUid(accountUid).orElseThrow();
     }
 
+    @Transactional
+    public boolean accountExists(String email) {
+        return accountPersistenceService.getAccountByEmail(email).isPresent();
+    }
+
     public Account authenticateAccount(AccountLoginRequest accountLoginRequest) {
         UsernamePasswordAuthenticationToken request = new UsernamePasswordAuthenticationToken(
                 accountLoginRequest.getEmail(), accountLoginRequest.getPassword());

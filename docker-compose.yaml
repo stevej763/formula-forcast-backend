@@ -16,6 +16,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     depends_on:
       - db
+    restart: unless-stopped
   web:
     image: formulaforecast-frontend:latest
     container_name: formulaforecast-frontend
@@ -23,6 +24,7 @@ services:
       - "80:80"
     depends_on:
       - app
+    restart: unless-stopped
   db:
     image: postgres:16
     container_name: formulaforecast-db

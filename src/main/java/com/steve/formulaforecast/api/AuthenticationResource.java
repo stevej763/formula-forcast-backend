@@ -53,6 +53,11 @@ public class AuthenticationResource {
                 accountCreationRequestDto.phoneNumber(),
                 passwordEncoder.encode(accountCreationRequestDto.password()));
         LOGGER.info("Account creation request received");
+
+        if (authenticationService.accountExists(accountCreationRequestDto.email())) {
+            LOGGER.info("Account already exists with email=[{}]", accountCreationRequestDto.email());
+            throw new RequestValidationException("Account already exists with that email");
+        }
         Account registeredUser = authenticationService.createAccount(accountCreationRequest);
         LOGGER.info("account created accountUid=[{}] email=[{}]", registeredUser.getAccountUid(), registeredUser.getEmail());
         return ResponseEntity.ok(new AccountCreationResponseDto(registeredUser.getAccountUid()));
