@@ -6,4 +6,8 @@ java -Dspring.profiles.active=demo -Xms512m -Xmx1024m -jar build/libs/formulafor
 
 
 ### Look for old process to kill:
-sudo lsof -i :8080
+`sudo lsof -i :8080`
+
+### docker build
+`docker build -t --build-arg SPRING_PROFILES_ACTIVE=dev formulaforecast-bankend .`
+docker build -t formulaforecast-bankend .

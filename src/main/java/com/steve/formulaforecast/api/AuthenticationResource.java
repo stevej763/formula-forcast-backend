@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.steve.formulaforecast.api.RequestValidationException.ACCOUNT_WITH_EMAIL_ALREADY_EXISTS;
 import static java.util.Objects.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = APPLICATION_JSON_VALUE)
 public class AuthenticationResource {
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationResource.class);
     private final JwtService jwtService;
@@ -56,7 +56,7 @@ public class AuthenticationResource {
 
         if (authenticationService.accountExists(accountCreationRequestDto.email())) {
             LOGGER.info("Account already exists with email=[{}]", accountCreationRequestDto.email());
-            throw new RequestValidationException("Account already exists with that email");
+            throw new RequestValidationException(ACCOUNT_WITH_EMAIL_ALREADY_EXISTS);
         }
         Account registeredUser = authenticationService.createAccount(accountCreationRequest);
         LOGGER.info("account created accountUid=[{}] email=[{}]", registeredUser.getAccountUid(), registeredUser.getEmail());

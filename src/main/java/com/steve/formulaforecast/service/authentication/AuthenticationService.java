@@ -1,5 +1,6 @@
 package com.steve.formulaforecast.service.authentication;
 
+import com.steve.formulaforecast.api.RequestValidationException;
 import com.steve.formulaforecast.service.Account.AccountPersistenceService;
 import com.steve.formulaforecast.service.Account.model.Account;
 import com.steve.formulaforecast.service.authentication.model.AccountCreationRequest;
@@ -9,10 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import static com.steve.formulaforecast.api.RequestValidationException.INVALID_LOGIN_ATTEMPT;
 
 @Service
 public class AuthenticationService {
@@ -51,9 +55,9 @@ public class AuthenticationService {
             LOGGER.info("Authenticated: {}", authResult.isAuthenticated());
             return accountPersistenceService.getAccountByEmail(accountLoginRequest.getEmail())
                     .orElseThrow();
-        } catch (Exception e) {
-            LOGGER.error("Exception when authenticating:", e);
+        } catch (AuthenticationException authenticationException) {
+            LOGGER.error("Exception when authenticating:", authenticationException);
+            throw new RequestValidationException(INVALID_LOGIN_ATTEMPT);
         }
-       throw new RuntimeException();
     }
 }

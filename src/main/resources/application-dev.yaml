@@ -22,7 +22,7 @@ spring:
 
 cors:
   allowed-origins:
-    - http://localhost
+    - http://localhost:5173
 
   quartz:
     job-store-type: memory

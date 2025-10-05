@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.InstantSource;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static com.steve.formulaforecast.TimeZones.LONDON_TIME;
@@ -69,10 +70,15 @@ public class ActiveRaceWeekendUpdateService {
 
     private void updateCurrentRaceWeekend(RaceWeekend raceWeekend) {
         LocalDate currentDate = getCurrentDate();
-        if (raceWeekend.getRaceWeekendStartDate().equals(currentDate)) {
+        boolean raceWeekendStartsToday = raceWeekend.getRaceWeekendStartDate().equals(currentDate);
+        boolean raceWeekendInProgress = raceWeekend.getRaceWeekendStartDate().isBefore(currentDate) &&
+                raceWeekend.getRaceWeekendEndDate().plusDays(1).isAfter(currentDate);
+
+        if (raceWeekendStartsToday || raceWeekendInProgress) {
             LOGGER.info("It is the start of the race weekend! Updating current race weekend to LIVE status for [{}]", raceWeekend.getRaceName());
             raceWeekendPersistenceService.updateRaceWeekendStatus(raceWeekend.getRaceWeekendUid(), RaceWeekendState.LIVE);
-        } else {
+        }
+        else {
             LOGGER.info("The current race weekend starts on [{}] not updating to LIVE yet. No action taken.", raceWeekend.getRaceWeekendStartDate());
         }
     }

@@ -1,5 +1,6 @@
 package com.steve.formulaforecast;
 
+import com.steve.formulaforecast.api.RequestValidationException;
 import com.steve.formulaforecast.persistence.AccountRepository;
 import com.steve.formulaforecast.persistence.entity.account.AccountAuthenticationUserDetailsEntity;
 import com.steve.formulaforecast.persistence.entity.account.AccountEntity;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
+import static com.steve.formulaforecast.api.RequestValidationException.*;
+
 @Configuration
 public class ApplicationAuthenticationConfiguration {
 
@@ -31,7 +34,7 @@ public class ApplicationAuthenticationConfiguration {
     @Bean
     UserDetailsService userDetailsService() {
         return username -> accountRepository.selectUserDetailsByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new RequestValidationException(USER_NOT_FOUND));
     }
 
     @Bean
