@@ -21,7 +21,7 @@ services:
     image: formulaforecast-frontend:latest
     container_name: formulaforecast-frontend
     ports:
-      - "80:80"
+      - "9000:80"
     depends_on:
       - app
     restart: unless-stopped
