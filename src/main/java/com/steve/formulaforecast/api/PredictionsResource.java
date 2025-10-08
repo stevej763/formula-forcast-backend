@@ -48,7 +48,7 @@ public class PredictionsResource {
         validateCurrentUserTeam(fastestLapPredictionRequest.userTeamUid(), account);
         FastestLapPrediction prediction = mapToModel(fastestLapPredictionRequest, account);
         predictionService.makeFastestLapPrediction(prediction);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new PredictionResponse());
     }
 
     private void validateCurrentUserTeam(UUID userTeamUid, Account account) {

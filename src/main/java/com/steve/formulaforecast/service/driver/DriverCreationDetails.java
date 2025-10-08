@@ -3,28 +3,20 @@ package com.steve.formulaforecast.service.driver;
 import com.neovisionaries.i18n.CountryCode;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public class DriverDetails {
-
-    private final UUID driverUid;
+public class DriverCreationDetails {
     private final String firstName;
     private final String lastName;
-    private final CountryCode nationality;
     private final String nickname;
+    private final CountryCode nationality;
     private final LocalDate dateOfBirth;
 
-    public DriverDetails(UUID driverUid, String firstName, String lastName, CountryCode nationality, String nickname, LocalDate dateOfBirth) {
-        this.driverUid = driverUid;
+    public DriverCreationDetails(String firstName, String lastName, String nickname, CountryCode nationality, LocalDate dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.nationality = nationality;
         this.nickname = nickname;
+        this.nationality = nationality;
         this.dateOfBirth = dateOfBirth;
-    }
-
-    public UUID getDriverUid() {
-        return driverUid;
     }
 
     public String getFirstName() {
@@ -35,12 +27,12 @@ public class DriverDetails {
         return lastName;
     }
 
-    public CountryCode getNationality() {
-        return nationality;
-    }
-
     public String getNickname() {
         return nickname;
+    }
+
+    public CountryCode getNationality() {
+        return nationality;
     }
 
     public LocalDate getDateOfBirth() {

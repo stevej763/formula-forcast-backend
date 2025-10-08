@@ -3,7 +3,7 @@ CREATE TABLE public.prediction_type (
     prediction_type_uid UUID NOT NULL,
     prediction_type TEXT NOT NULL,
     description TEXT NOT NULL,
-    predication_entity TEXT NOT NULL,
+    prediction_selection_type TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
 
     CONSTRAINT pk_prediction_type_id PRIMARY KEY (id),

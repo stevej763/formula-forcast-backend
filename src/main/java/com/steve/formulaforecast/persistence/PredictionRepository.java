@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.persistence;
 
-import com.steve.formulaforecast.persistence.entity.PredictionEntity;
+import com.steve.formulaforecast.persistence.entity.PredictionDetailEntity;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
@@ -8,7 +8,7 @@ import org.springframework.data.repository.Repository;
 import java.time.Instant;
 import java.util.UUID;
 
-public interface PredictionRepository extends Repository<PredictionEntity, Long> {
+public interface PredictionRepository extends Repository<PredictionDetailEntity, Long> {
 
     @Modifying
     @Query("""
@@ -26,8 +26,9 @@ public interface PredictionRepository extends Repository<PredictionEntity, Long>
                     (SELECT id FROM user_team WHERE team_uid = :userTeamUid),
                     :createdAt
                 )
+                ON CONFLICT DO NOTHING
             """)
-    void insertFastestLapPrediction(UUID predictionUid, UUID predictionTypeUid, UUID raceWeekendUid, UUID userTeamUid, Instant createdAt);
+    int insertFastestLapPrediction(UUID predictionUid, UUID predictionTypeUid, UUID raceWeekendUid, UUID userTeamUid, Instant createdAt);
 
     @Modifying
     @Query("""
@@ -40,11 +41,11 @@ public interface PredictionRepository extends Repository<PredictionEntity, Long>
                 VALUES
                 (
                     :predictionChoiceUid,
-                    (SELECT id FROM prediction WHERE prediction_uid = :predicationUid),
+                    (SELECT id FROM prediction WHERE prediction_uid = :predictionUid),
                     (SELECT id FROM driver WHERE driver_uid = :driverUid),
                     FALSE,
                     :createdAt
             )
             """)
-    void insertFastestLapPredictionChoice(UUID predictionChoiceUid, UUID predicationUid, UUID driverUid, Instant createdAt);
+    void insertFastestLapPredictionChoice(UUID predictionChoiceUid, UUID predictionUid, UUID driverUid, Instant createdAt);
 }
