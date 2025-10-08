@@ -1,12 +1,11 @@
 package com.steve.formulaforecast.service.leaderboard;
 
 import com.steve.formulaforecast.persistence.LeaderboardEntryRepository;
-import com.steve.formulaforecast.persistence.entity.leaderboardEntity.LeaderboardEntryEntity;
+import com.steve.formulaforecast.persistence.entity.leaderboardentity.LeaderboardEntryEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.InstantSource;
 import java.util.List;
 import java.util.UUID;

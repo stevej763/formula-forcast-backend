@@ -1,7 +1,7 @@
 package com.steve.formulaforecast.service.team;
 
 import com.steve.formulaforecast.persistence.UserTeamRepository;
-import com.steve.formulaforecast.persistence.entity.userTeam.UserTeamEntity;
+import com.steve.formulaforecast.persistence.entity.userteam.UserTeamEntity;
 import com.steve.formulaforecast.service.team.model.UserTeam;
 import com.steve.formulaforecast.service.team.model.UserTeamCreationRequest;
 import org.springframework.stereotype.Service;

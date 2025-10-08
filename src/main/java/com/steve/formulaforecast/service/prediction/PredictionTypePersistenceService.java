@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.service.prediction;
 
-import com.steve.formulaforecast.persistence.PredictionTypeEntity;
+import com.steve.formulaforecast.persistence.entity.prediction.PredictionTypeEntity;
 import com.steve.formulaforecast.persistence.PredictionTypeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

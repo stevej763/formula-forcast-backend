@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.service.authentication;
 
-import com.steve.formulaforecast.api.RequestValidationException;
+import com.steve.formulaforecast.api.exception.RequestValidationException;
 import com.steve.formulaforecast.service.Account.AccountPersistenceService;
 import com.steve.formulaforecast.service.Account.model.Account;
 import com.steve.formulaforecast.service.authentication.model.AccountCreationRequest;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.steve.formulaforecast.api.RequestValidationException.INVALID_LOGIN_ATTEMPT;
+import static com.steve.formulaforecast.api.exception.RequestValidationException.INVALID_LOGIN_ATTEMPT;
 
 @Service
 public class AuthenticationService {

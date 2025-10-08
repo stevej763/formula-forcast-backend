@@ -1,9 +1,7 @@
 package com.steve.formulaforecast;
 
-import com.steve.formulaforecast.api.RequestValidationException;
+import com.steve.formulaforecast.api.exception.RequestValidationException;
 import com.steve.formulaforecast.persistence.AccountRepository;
-import com.steve.formulaforecast.persistence.entity.account.AccountAuthenticationUserDetailsEntity;
-import com.steve.formulaforecast.persistence.entity.account.AccountEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +11,9 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Optional;
-
-import static com.steve.formulaforecast.api.RequestValidationException.*;
+import static com.steve.formulaforecast.api.exception.RequestValidationException.*;
 
 @Configuration
 public class ApplicationAuthenticationConfiguration {

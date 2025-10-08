@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.api.validation;
 
-import com.steve.formulaforecast.api.RequestValidationException;
+import com.steve.formulaforecast.api.exception.RequestValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

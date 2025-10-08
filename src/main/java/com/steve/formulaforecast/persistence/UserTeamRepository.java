@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.persistence;
 
-import com.steve.formulaforecast.persistence.entity.userTeam.UserTeamEntity;
+import com.steve.formulaforecast.persistence.entity.userteam.UserTeamEntity;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;

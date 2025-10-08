@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.service.leaderboard;
 
-import com.steve.formulaforecast.persistence.entity.ChampionshipSeasonEntity;
+import com.steve.formulaforecast.persistence.entity.championshipseason.ChampionshipSeasonEntity;
 import com.steve.formulaforecast.persistence.ChampionshipSeasonStatements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

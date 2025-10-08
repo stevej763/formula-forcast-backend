@@ -1,21 +1,11 @@
 package com.steve.formulaforecast.job;
 
-import com.steve.formulaforecast.api.model.raceweekend.ActiveRaceWeekendUpdateService;
+import com.steve.formulaforecast.api.race.model.raceweekend.ActiveRaceWeekendUpdateService;
 import com.steve.formulaforecast.job.config.JobDescription;
 import com.steve.formulaforecast.job.config.JobIdentifier;
-import com.steve.formulaforecast.service.raceweekends.RaceWeekendPersistenceService;
-import com.steve.formulaforecast.service.raceweekends.model.RaceWeekend;
-import com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.time.*;
-import java.util.Optional;
-
-import static com.steve.formulaforecast.TimeZones.LONDON_TIME;
 
 @Component
 @JobIdentifier("ActiveRaceWeekendScheduledJob")
