@@ -5,7 +5,6 @@ import com.steve.formulaforecast.persistence.entity.driver.DriverEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Driver;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +34,19 @@ public class DriverDetailsPersistenceService {
                 driverEntity.firstName(),
                 driverEntity.lastName(),
                 driverEntity.nationality(),
-                driverEntity.nickname());
+                driverEntity.nickname(),
+                driverEntity.dateOfBirth());
+    }
+
+    @Transactional
+    public void insertDriver(UUID driverUid, DriverCreationDetails driverDetails) {
+        driverRepository.insertDriver(
+                driverUid,
+                driverDetails.getFirstName(),
+                driverDetails.getLastName(),
+                driverDetails.getNickname(),
+                driverDetails.getNationality(),
+                driverDetails.getDateOfBirth()
+        );
     }
 }

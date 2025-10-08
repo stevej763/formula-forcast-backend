@@ -1,4 +1,4 @@
 package com.steve.formulaforecast.api;
 
-public record PredictionResponse() {
+public record ConstructorDetailDto() {
 }

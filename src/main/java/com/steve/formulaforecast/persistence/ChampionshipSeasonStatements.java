@@ -1,9 +1,11 @@
 package com.steve.formulaforecast.persistence;
 
+import com.steve.formulaforecast.persistence.entity.ChampionshipSeasonEntity;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface ChampionshipSeasonStatements extends Repository<ChampionshipSeasonEntity, Long>  {
 
@@ -18,4 +20,16 @@ public interface ChampionshipSeasonStatements extends Repository<ChampionshipSea
             """
     )
     Optional<ChampionshipSeasonEntity> getChampionshipSeason(String year);
+
+    @Query(
+            """
+            SELECT
+                championship_season_uid,
+                championship_name,
+                championship_year
+            FROM championship_season
+            ORDER BY championship_year DESC
+            """
+    )
+    Stream<ChampionshipSeasonEntity> selectAllSeasons();
 }

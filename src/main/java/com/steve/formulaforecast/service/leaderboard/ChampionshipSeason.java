@@ -5,27 +5,27 @@ import java.util.UUID;
 public class ChampionshipSeason {
 
     private final UUID championshipSeasonUid;
-    private final String championshipSeasonName;
-    private final String championshipSeasonYear;
+    private final String championshipName;
+    private final String championshipYear;
 
     public ChampionshipSeason(
             UUID championshipSeasonUid,
-            String championshipSeasonName,
-            String championshipSeasonYear) {
+            String championshipName,
+            String championshipYear) {
         this.championshipSeasonUid = championshipSeasonUid;
-        this.championshipSeasonName = championshipSeasonName;
-        this.championshipSeasonYear = championshipSeasonYear;
+        this.championshipName = championshipName;
+        this.championshipYear = championshipYear;
     }
 
     public UUID getChampionshipSeasonUid() {
         return championshipSeasonUid;
     }
 
-    public String getChampionshipSeasonName() {
-        return championshipSeasonName;
+    public String getChampionshipName() {
+        return championshipName;
     }
 
-    public String getChampionshipSeasonYear() {
-        return championshipSeasonYear;
+    public String getChampionshipYear() {
+        return championshipYear;
     }
 }

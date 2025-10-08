@@ -2,6 +2,7 @@ package com.steve.formulaforecast.api;
 
 import com.steve.formulaforecast.api.model.driver.DriverDetailResponse;
 import com.steve.formulaforecast.api.model.driver.DriverDetailsResponse;
+import com.steve.formulaforecast.service.driver.DriverCreationDetails;
 import com.steve.formulaforecast.service.driver.DriverDetails;
 import com.steve.formulaforecast.service.driver.DriverDetailsService;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,18 @@ public class DriverResource {
         return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
     }
 
+    @PostMapping("/create")
+    public void createDriver(@RequestBody DriverCreationRequest driverCreationRequest) {
+        DriverCreationDetails driverDetails = new DriverCreationDetails(
+                driverCreationRequest.firstName(),
+                driverCreationRequest.lastName(),
+                driverCreationRequest.nickname(),
+                driverCreationRequest.nationality(),
+                driverCreationRequest.dateOfBirth()
+        );
+        driverDetailsService.createDriver(driverDetails);
+    }
+
     @GetMapping("/current-season")
     public ResponseEntity<DriverDetailsResponse> getCurrentSeasonDrivers() {
         List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getAllDriversForCurrentSeason().stream().map(this::toDto).toList();
@@ -47,6 +60,7 @@ public class DriverResource {
                 driverDetails.getFirstName(),
                 driverDetails.getLastName(),
                 driverDetails.getNickname(),
-                driverDetails.getNationality());
+                driverDetails.getNationality(),
+                driverDetails.getDateOfBirth());
     }
 }
