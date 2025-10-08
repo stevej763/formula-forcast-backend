@@ -28,6 +28,7 @@ spring:
 cors:
   allowed-origins:
     - https://demo.formulaforecast.com
+    - https://admin.demo.formulaforecast.com
 
   quartz:
     job-store-type: memory
