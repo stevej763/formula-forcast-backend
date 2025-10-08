@@ -1,4 +1,4 @@
 package com.steve.formulaforecast.api.constructor.model.constructor;
 
-public record ConstructorCreationRequest() {
+public record ConstructorCreationRequest(String teamName, String base) {
 }

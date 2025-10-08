@@ -1,6 +1,6 @@
 package com.steve.formulaforecast.job;
 
-import com.steve.formulaforecast.api.race.model.raceweekend.ActiveRaceWeekendUpdateService;
+import com.steve.formulaforecast.service.raceweekends.ActiveRaceWeekendUpdateService;
 import com.steve.formulaforecast.job.config.JobDescription;
 import com.steve.formulaforecast.job.config.JobIdentifier;
 import org.quartz.Job;

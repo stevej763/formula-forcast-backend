@@ -1,6 +1,5 @@
-package com.steve.formulaforecast.api.race.model.raceweekend;
+package com.steve.formulaforecast.service.raceweekends;
 
-import com.steve.formulaforecast.service.raceweekends.RaceWeekendPersistenceService;
 import com.steve.formulaforecast.service.raceweekends.model.RaceWeekend;
 import com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState;
 import org.slf4j.Logger;
