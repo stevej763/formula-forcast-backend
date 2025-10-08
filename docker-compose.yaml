@@ -25,6 +25,14 @@ services:
     depends_on:
       - app
     restart: unless-stopped
+  admin:
+    image: formulaforecast-admin:latest
+    container_name: formulaforecast-admin
+    ports:
+      - "9001:80"
+    depends_on:
+      - app
+    restart: unless-stopped
   db:
     image: postgres:16
     container_name: formulaforecast-db
