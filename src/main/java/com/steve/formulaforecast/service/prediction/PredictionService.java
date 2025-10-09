@@ -14,9 +14,9 @@ public class PredictionService {
         this.predictionPersistenceService = predictionPersistenceService;
     }
 
-    public void makeFastestLapPrediction(FastestLapPrediction fastestLapPrediction) {
-        LOGGER.info("Making fastest lap prediction for user team=[{}] for raceWeekend=[{}]",
-                fastestLapPrediction.getUserTeamUid(), fastestLapPrediction.getRaceWeekendUid());
-        predictionPersistenceService.saveFastestLapPrediction(fastestLapPrediction);
+    public void makeDriverPrediction(DriverPrediction driverPrediction) {
+        LOGGER.info("Making driver prediction for user team=[{}] for raceWeekend=[{}]",
+                driverPrediction.getUserTeamUid(), driverPrediction.getRaceWeekendUid());
+        predictionPersistenceService.saveDriverPrediction(driverPrediction);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PredictionRepository extends Repository<PredictionDetailEntity, Long> {
@@ -28,7 +29,7 @@ public interface PredictionRepository extends Repository<PredictionDetailEntity,
                 )
                 ON CONFLICT DO NOTHING
             """)
-    int insertFastestLapPrediction(UUID predictionUid, UUID predictionTypeUid, UUID raceWeekendUid, UUID userTeamUid, Instant createdAt);
+    int insertPrediction(UUID predictionUid, UUID predictionTypeUid, UUID raceWeekendUid, UUID userTeamUid, Instant createdAt);
 
     @Modifying
     @Query("""
@@ -47,5 +48,27 @@ public interface PredictionRepository extends Repository<PredictionDetailEntity,
                     :createdAt
             )
             """)
-    void insertFastestLapPredictionChoice(UUID predictionChoiceUid, UUID predictionUid, UUID driverUid, Instant createdAt);
+    void insertPredictionChoice(UUID predictionChoiceUid, UUID predictionUid, UUID driverUid, Instant createdAt);
+
+    @Query("""
+        SELECT
+            prediction.prediction_uid
+        FROM
+            prediction
+        WHERE
+            prediction.prediction_type_id = (SELECT id FROM prediction_type WHERE prediction_type_uid = :predictionTypeUid)
+            AND prediction.race_weekend_id = (SELECT id FROM race_weekend WHERE race_weekend_uid = :raceWeekendUid)
+            AND prediction.user_team_id = (SELECT id FROM user_team WHERE team_uid = :userTeamUid)
+        FOR UPDATE
+        """)
+    Optional<PredictionDetailEntity> selectExistingPredictionForUpdate(UUID predictionTypeUid, UUID raceWeekendUid, UUID userTeamUid);
+
+    @Modifying
+    @Query("""
+        UPDATE prediction_choice
+        SET driver_id = (SELECT id FROM driver WHERE driver_uid = :driverUid),
+            created_at = :createdAt
+        WHERE prediction_id = (SELECT id FROM prediction WHERE prediction_uid = :predictionUid)
+    """)
+    int updatePredictionChoice(UUID predictionUid, UUID driverUid, Instant createdAt);
 }

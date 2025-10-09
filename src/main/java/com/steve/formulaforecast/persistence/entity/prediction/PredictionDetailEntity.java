@@ -1,4 +1,7 @@
 package com.steve.formulaforecast.persistence.entity.prediction;
 
-public record PredictionDetailEntity() {
+import java.util.UUID;
+
+public record PredictionDetailEntity(UUID predictionUid) {
+
 }

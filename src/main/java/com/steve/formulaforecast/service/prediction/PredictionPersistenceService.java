@@ -1,6 +1,7 @@
 package com.steve.formulaforecast.service.prediction;
 
 import com.steve.formulaforecast.persistence.PredictionRepository;
+import com.steve.formulaforecast.persistence.entity.prediction.PredictionDetailEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,25 +25,42 @@ public class PredictionPersistenceService {
     }
 
     @Transactional
-    public void saveFastestLapPrediction(FastestLapPrediction fastestLapPrediction) {
+    public void saveDriverPrediction(DriverPrediction driverPrediction) {
         UUID predictionUid = UUID.randomUUID();
         UUID predictionChoiceUid = UUID.randomUUID();
         Instant createdAt = instantSource.instant();
-        int inserted = predictionRepository.insertFastestLapPrediction(
+        int inserted = predictionRepository.insertPrediction(
                 predictionUid,
-                fastestLapPrediction.getPredictionTypeUid(),
-                fastestLapPrediction.getRaceWeekendUid(),
-                fastestLapPrediction.getUserTeamUid(),
+                driverPrediction.getPredictionTypeUid(),
+                driverPrediction.getRaceWeekendUid(),
+                driverPrediction.getUserTeamUid(),
                 createdAt);
         if (inserted == 0) {
-            LOGGER.info("Prediction for user team=[{}] for raceWeekend=[{}] already exists, skipping insert",
-                    fastestLapPrediction.getUserTeamUid(), fastestLapPrediction.getRaceWeekendUid());
+            LOGGER.info("Prediction for user team=[{}] for raceWeekend=[{}] for type=[{}] already exists, updating existing prediction",
+                    driverPrediction.getUserTeamUid(), driverPrediction.getRaceWeekendUid(), driverPrediction.getPredictionTypeUid());
+            predictionRepository.selectExistingPredictionForUpdate(
+                    driverPrediction.getPredictionTypeUid(),
+                    driverPrediction.getRaceWeekendUid(),
+                    driverPrediction.getUserTeamUid()
+            ).ifPresent(existingPrediction -> {
+                LOGGER.info("Found existing prediction with predictionUid=[{}], updating prediction choice",
+                        existingPrediction.predictionUid());
+                updatePredictionChoice(driverPrediction, existingPrediction, createdAt);
+            });
         } else {
-            predictionRepository.insertFastestLapPredictionChoice(
+            predictionRepository.insertPredictionChoice(
                     predictionChoiceUid,
                     predictionUid,
-                    fastestLapPrediction.getDriverUid(),
+                    driverPrediction.getDriverUid(),
                     createdAt);
         }
+    }
+
+    private void updatePredictionChoice(DriverPrediction driverPrediction, PredictionDetailEntity existingPrediction, Instant createdAt) {
+        int inserted = predictionRepository.updatePredictionChoice(
+                existingPrediction.predictionUid(),
+                driverPrediction.getDriverUid(),
+                createdAt);
+        LOGGER.info("Updated prediction choice, rows affected=[{}]", inserted);
     }
 }

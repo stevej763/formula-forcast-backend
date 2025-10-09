@@ -1,11 +1,11 @@
 package com.steve.formulaforecast.api.prediction;
 
 import com.steve.formulaforecast.api.exception.RequestValidationException;
-import com.steve.formulaforecast.api.prediction.model.prediction.FastestLapPredictionRequest;
+import com.steve.formulaforecast.api.prediction.model.prediction.PredictionRequest;
 import com.steve.formulaforecast.api.prediction.model.prediction.PredictionResponse;
 import com.steve.formulaforecast.service.Account.model.Account;
 import com.steve.formulaforecast.service.authentication.AuthenticatedAccountProvider;
-import com.steve.formulaforecast.service.prediction.FastestLapPrediction;
+import com.steve.formulaforecast.service.prediction.DriverPrediction;
 import com.steve.formulaforecast.service.prediction.PredictionService;
 import com.steve.formulaforecast.service.team.UserTeamService;
 import com.steve.formulaforecast.service.team.model.UserTeam;
@@ -43,12 +43,12 @@ public class PredictionsResource {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/make-prediction/fastest-lap")
-    public ResponseEntity<PredictionResponse> postFastestLapPrediction(@RequestBody FastestLapPredictionRequest fastestLapPredictionRequest) {
+    @PostMapping("/make-prediction")
+    public ResponseEntity<PredictionResponse> postPrediction(@RequestBody PredictionRequest predictionRequest) {
         Account account = authenticatedAccountProvider.getAuthenticatedAccount();
-        validateCurrentUserTeam(fastestLapPredictionRequest.userTeamUid(), account);
-        FastestLapPrediction prediction = mapToModel(fastestLapPredictionRequest, account);
-        predictionService.makeFastestLapPrediction(prediction);
+        validateCurrentUserTeam(predictionRequest.userTeamUid(), account);
+        DriverPrediction driverPrediction = mapToModel(predictionRequest);
+        predictionService.makeDriverPrediction(driverPrediction);
         return ResponseEntity.ok(new PredictionResponse());
     }
 
@@ -68,8 +68,12 @@ public class PredictionsResource {
         }
     }
 
-    private FastestLapPrediction mapToModel(FastestLapPredictionRequest fastestLapPredictionRequest, Account account) {
-        return new FastestLapPrediction(fastestLapPredictionRequest.predictionTypeUid(), fastestLapPredictionRequest.userTeamUid(), fastestLapPredictionRequest.raceWeekendUid(), fastestLapPredictionRequest.driverUid());
+    private DriverPrediction mapToModel(PredictionRequest predictionRequest) {
+        return new DriverPrediction(
+                predictionRequest.predictionTypeUid(),
+                predictionRequest.userTeamUid(),
+                predictionRequest.raceWeekendUid(),
+                predictionRequest.driverUid());
     }
 
     @PostMapping("/make-prediction/driver-of-the-day")
@@ -86,6 +90,4 @@ public class PredictionsResource {
     public ResponseEntity<PredictionResponse> postBiggestLoserPrediction() {
         return ResponseEntity.ok().build();
     }
-
-
 }
