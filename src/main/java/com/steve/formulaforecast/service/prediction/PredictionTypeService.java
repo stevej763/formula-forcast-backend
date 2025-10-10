@@ -3,6 +3,8 @@ package com.steve.formulaforecast.service.prediction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PredictionTypeService {
@@ -15,5 +17,9 @@ public class PredictionTypeService {
 
     public List<PredictionTypeDetail> getAllPredictionTypes() {
        return predictionTypePersistenceService.getAllPredictionTypes();
+    }
+
+    public Optional<PredictionTypeDetail> getPredictionTypeByUid(UUID predictionTypeUid) {
+        return predictionTypePersistenceService.getPredictionTypeByUid(predictionTypeUid);
     }
 }

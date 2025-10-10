@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PredictionTypePersistenceService {
@@ -28,5 +30,9 @@ public class PredictionTypePersistenceService {
                 predictionTypeEntity.description(),
                 predictionTypeEntity.predictionSelectionType(),
                 predictionTypeEntity.createdAt());
+    }
+
+    public Optional<PredictionTypeDetail> getPredictionTypeByUid(UUID predictionTypeUid) {
+        return predictionTypeRepository.selectPredictionTypeByUid(predictionTypeUid).map(this::toModel);
     }
 }

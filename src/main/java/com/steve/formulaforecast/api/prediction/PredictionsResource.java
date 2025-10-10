@@ -1,8 +1,10 @@
 package com.steve.formulaforecast.api.prediction;
 
 import com.steve.formulaforecast.api.exception.RequestValidationException;
+import com.steve.formulaforecast.api.prediction.model.prediction.DriverPredictionRequestDto;
 import com.steve.formulaforecast.api.prediction.model.prediction.PredictionRequest;
 import com.steve.formulaforecast.api.prediction.model.prediction.PredictionResponse;
+import com.steve.formulaforecast.api.prediction.model.prediction.RankedDriverPrediction;
 import com.steve.formulaforecast.service.Account.model.Account;
 import com.steve.formulaforecast.service.authentication.AuthenticatedAccountProvider;
 import com.steve.formulaforecast.service.prediction.DriverPrediction;
@@ -10,11 +12,9 @@ import com.steve.formulaforecast.service.prediction.PredictionService;
 import com.steve.formulaforecast.service.team.UserTeamService;
 import com.steve.formulaforecast.service.team.model.UserTeam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -33,23 +33,20 @@ public class PredictionsResource {
         this.userTeamService = userTeamService;
     }
 
-    @PostMapping("/make-prediction/qualifying-top-three")
-    public ResponseEntity<PredictionResponse> postQualifyingTopThreePrediction() {
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/make-prediction/race-top-three")
-    public ResponseEntity<PredictionResponse> postRaceTopThreePrediction() {
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/make-prediction")
-    public ResponseEntity<PredictionResponse> postPrediction(@RequestBody PredictionRequest predictionRequest) {
+    public void postPrediction(@RequestBody PredictionRequest predictionRequest) {
         Account account = authenticatedAccountProvider.getAuthenticatedAccount();
         validateCurrentUserTeam(predictionRequest.userTeamUid(), account);
         DriverPrediction driverPrediction = mapToModel(predictionRequest);
         predictionService.makeDriverPrediction(driverPrediction);
-        return ResponseEntity.ok(new PredictionResponse());
+    }
+
+    @GetMapping("/{userTeamUid}/{raceWeekendUid}")
+    public ResponseEntity<PredictionResponse> getPredictionForRaceWeekend(@PathVariable UUID raceWeekendUid, @PathVariable UUID userTeamUid) {
+        Account account = authenticatedAccountProvider.getAuthenticatedAccount();
+        validateCurrentUserTeam(userTeamUid, account);
+        Map<UUID, DriverPrediction> driverPredictionForRaceWeekendForTeam = predictionService.getDriverPredictionForRaceWeekendForTeam(raceWeekendUid, userTeamUid);
+        return ResponseEntity.ok(new PredictionResponse(driverPredictionForRaceWeekendForTeam));
     }
 
     private void validateCurrentUserTeam(UUID userTeamUid, Account account) {
@@ -73,21 +70,12 @@ public class PredictionsResource {
                 predictionRequest.predictionTypeUid(),
                 predictionRequest.userTeamUid(),
                 predictionRequest.raceWeekendUid(),
-                predictionRequest.driverUid());
+                predictionRequest.driverPredictions().stream().map(this::toRankedPredication).toList());
     }
 
-    @PostMapping("/make-prediction/driver-of-the-day")
-    public ResponseEntity<PredictionResponse> postDriverOfTheDayPrediction() {
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/make-prediction/biggest-winner")
-    public ResponseEntity<PredictionResponse> postBiggestWinnerPrediction() {
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/make-prediction/biggest-loser")
-    public ResponseEntity<PredictionResponse> postBiggestLoserPrediction() {
-        return ResponseEntity.ok().build();
+    private RankedDriverPrediction toRankedPredication(DriverPredictionRequestDto driverPredictionRequestDto) {
+        return new RankedDriverPrediction(
+                driverPredictionRequestDto.driverUid(),
+                driverPredictionRequestDto.rank());
     }
 }

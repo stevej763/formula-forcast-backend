@@ -49,7 +49,7 @@ public class DriverResource {
         return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
     }
 
-    @GetMapping("/{driverUid}")
+    @GetMapping("/{driverUids}")
     public ResponseEntity<DriverDetailResponse> getDriver(@PathVariable UUID driverUid) {
         Optional<DriverDetailResponse> driverDetailResponses = driverDetailsService.getDriver(driverUid).map(this::toDto);
         return ResponseEntity.of(driverDetailResponses);
