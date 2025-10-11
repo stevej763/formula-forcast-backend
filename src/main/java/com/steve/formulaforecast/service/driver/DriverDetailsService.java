@@ -27,6 +27,11 @@ public class DriverDetailsService {
     }
 
     @Transactional
+    public List<DriverDetails> getDAllActiveDrivers() {
+        return driverDetailsPersistenceService.selectAllActiveDrivers();
+    }
+
+    @Transactional
     public Optional<DriverDetails> getDriver(UUID driverUid) {
         return driverDetailsPersistenceService.getDriverByUid(driverUid);
     }

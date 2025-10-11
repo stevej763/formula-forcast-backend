@@ -31,6 +31,12 @@ public class DriverResource {
         return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
     }
 
+    @GetMapping("/all/active")
+    public ResponseEntity<DriverDetailsResponse> getAllActiveDrivers() {
+        List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getDrivers().stream().map(this::toDto).toList();
+        return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
+    }
+
     @PostMapping("/create")
     public void createDriver(@RequestBody DriverCreationRequest driverCreationRequest) {
         DriverCreationDetails driverDetails = new DriverCreationDetails(

@@ -28,6 +28,11 @@ public class DriverDetailsPersistenceService {
     }
 
     @Transactional
+    public List<DriverDetails> selectAllActiveDrivers() {
+        return driverRepository.selectAllActiveDrivers().map(this::toModel).toList();
+    }
+
+    @Transactional
     public Optional<DriverDetails> getDriverByUid(UUID driverUid) {
         return driverRepository.selectDriver(driverUid).map(this::toModel);
     }

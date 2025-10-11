@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public interface DriverRepository extends Repository<DriverEntity, Long> {
 
     @Query("""
-            SELECT 
+            SELECT
                 driver_uid, 
                 first_name, 
                 last_name, 
@@ -32,6 +32,27 @@ public interface DriverRepository extends Repository<DriverEntity, Long> {
             LEFT JOIN constructor c ON c.id = dcm.constructor_id
             """)
     Stream<DriverEntity> selectAllDrivers();
+
+    @Query("""
+            SELECT
+                driver_uid, 
+                first_name, 
+                last_name, 
+                nickname, 
+                date_of_birth, 
+                nationality, 
+                c.constructor_uid, 
+                c.team_name
+            FROM driver
+            LEFT JOIN (
+                SELECT DISTINCT ON (driver_id) *
+                FROM driver_constructor_mapping
+                ORDER BY driver_id, season_id DESC
+            ) dcm ON dcm.driver_id = driver.id
+            LEFT JOIN constructor c ON c.id = dcm.constructor_id
+            WHERE c.constructor_uid IS NOT NULL
+            """)
+    Stream<DriverEntity> selectAllActiveDrivers();
 
     @Query("""
             SELECT

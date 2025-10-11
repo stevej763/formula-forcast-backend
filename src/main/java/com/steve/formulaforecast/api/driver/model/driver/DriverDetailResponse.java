@@ -2,6 +2,7 @@ package com.steve.formulaforecast.api.driver.model.driver;
 
 import com.neovisionaries.i18n.CountryCode;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record DriverDetailResponse(
@@ -10,5 +11,7 @@ public record DriverDetailResponse(
         String lastName,
         String nickname,
         CountryCode nationality,
-        java.time.LocalDate dateOfBirth, UUID constructorUid, String teamName) {
+        LocalDate dateOfBirth,
+        UUID constructorUid,
+        String teamName) {
 }
