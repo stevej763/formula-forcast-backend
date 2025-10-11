@@ -33,7 +33,7 @@ public class DriverResource {
 
     @GetMapping("/all/active")
     public ResponseEntity<DriverDetailsResponse> getAllActiveDrivers() {
-        List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getDrivers().stream().map(this::toDto).toList();
+        List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getAllActiveDrivers().stream().map(this::toDto).toList();
         return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
     }
 

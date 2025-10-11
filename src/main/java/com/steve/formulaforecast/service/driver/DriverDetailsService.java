@@ -27,7 +27,7 @@ public class DriverDetailsService {
     }
 
     @Transactional
-    public List<DriverDetails> getDAllActiveDrivers() {
+    public List<DriverDetails> getAllActiveDrivers() {
         return driverDetailsPersistenceService.selectAllActiveDrivers();
     }
 
