@@ -12,8 +12,6 @@ import java.util.List;
 @Service
 public class ChampionshipSeasonService {
 
-
-
     private static final ZoneId LONDON_ZONE = ZoneId.of("Europe/London");
     private static final Logger LOGGER = LoggerFactory.getLogger(ChampionshipSeasonService.class);
 

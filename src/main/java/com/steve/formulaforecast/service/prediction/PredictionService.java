@@ -15,10 +15,8 @@ public class PredictionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PredictionService.class);
     private static final List<PredictionType> TOP_THREE_PREDICTIONS = List.of(PredictionType.QUALIFYING_TOP_THREE, PredictionType.RACE_TOP_THREE);
 
-
     private final PredictionPersistenceService predictionPersistenceService;
     private final PredictionTypeService predictionTypeService;
-
 
     public PredictionService(PredictionPersistenceService predictionPersistenceService, PredictionTypeService predictionTypeService) {
         this.predictionPersistenceService = predictionPersistenceService;
@@ -31,7 +29,7 @@ public class PredictionService {
 
         if (driverPrediction.getRankedDriverPredictions().size() == 3) {
             if (!TOP_THREE_PREDICTIONS.contains(predictionTypeDetail.getPredictionType())) {
-                throw new IllegalArgumentException("Prediction type " + predictionTypeDetail.getPredictionType() + " does not support top three selections.");
+                throw new IllegalArgumentException("Prediction type " + predictionTypeDetail.getPredictionType() + " does not support more than one prediction choice.");
             }
             predictionPersistenceService.saveRankedDriverPrediction(driverPrediction);
             return;
@@ -48,7 +46,7 @@ public class PredictionService {
         }
     }
 
-    public Map<UUID, DriverPrediction> getDriverPredictionForRaceWeekendForTeam(UUID raceWeekendUid, UUID userTeamUid) {
+    public Map<UUID, DriverPrediction> getDriverPredictionsForRaceWeekendForTeam(UUID raceWeekendUid, UUID userTeamUid) {
         return predictionTypeService.getAllPredictionTypes().stream()
                 .collect(Collectors.toMap(
                         PredictionTypeDetail::getPredictionTypeUid,

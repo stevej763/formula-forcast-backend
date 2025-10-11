@@ -11,6 +11,8 @@ public record DriverEntity(
         String lastName,
         String nickname,
         CountryCode nationality,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        UUID constructorUid,
+        String teamName
 ) {
 }

@@ -24,7 +24,7 @@ public class ChampionshipSeasonResource {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ChampionshipSeasonsResponse> getAllConstructors() {
+    public ResponseEntity<ChampionshipSeasonsResponse> getAllSeasons() {
         List<ChampionshipSeasonDto> allSeasons = championshipSeasonService.getAllSeasons().stream().map(this::toDto).toList();
         ChampionshipSeasonsResponse championshipSeasonsResponse = new ChampionshipSeasonsResponse(allSeasons);
         return ResponseEntity.ok(championshipSeasonsResponse);

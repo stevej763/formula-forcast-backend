@@ -43,6 +43,11 @@ public class DriverResource {
         driverDetailsService.createDriver(driverDetails);
     }
 
+    @PostMapping("/set-constructor")
+    public void setDriverConstructor(@RequestBody DriverConstructorRequest driverConstructorRequest) {
+        driverDetailsService.updateDriverConstructor(driverConstructorRequest.driverUid(), driverConstructorRequest.constructorUid());
+    }
+
     @GetMapping("/current-season")
     public ResponseEntity<DriverDetailsResponse> getCurrentSeasonDrivers() {
         List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getAllDriversForCurrentSeason().stream().map(this::toDto).toList();
@@ -62,6 +67,8 @@ public class DriverResource {
                 driverDetails.getLastName(),
                 driverDetails.getNickname(),
                 driverDetails.getNationality(),
-                driverDetails.getDateOfBirth());
+                driverDetails.getDateOfBirth(),
+                driverDetails.getConstructorUid(),
+                driverDetails.getTeamName());
     }
 }

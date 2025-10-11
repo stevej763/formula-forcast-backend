@@ -45,7 +45,7 @@ public class PredictionsResource {
     public ResponseEntity<PredictionResponse> getPredictionForRaceWeekend(@PathVariable UUID raceWeekendUid, @PathVariable UUID userTeamUid) {
         Account account = authenticatedAccountProvider.getAuthenticatedAccount();
         validateCurrentUserTeam(userTeamUid, account);
-        Map<UUID, DriverPrediction> driverPredictionForRaceWeekendForTeam = predictionService.getDriverPredictionForRaceWeekendForTeam(raceWeekendUid, userTeamUid);
+        Map<UUID, DriverPrediction> driverPredictionForRaceWeekendForTeam = predictionService.getDriverPredictionsForRaceWeekendForTeam(raceWeekendUid, userTeamUid);
         return ResponseEntity.ok(new PredictionResponse(driverPredictionForRaceWeekendForTeam));
     }
 

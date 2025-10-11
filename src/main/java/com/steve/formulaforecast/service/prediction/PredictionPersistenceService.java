@@ -53,11 +53,12 @@ public class PredictionPersistenceService {
                 updatePredictionChoice(driverPrediction, existingPrediction, createdAt);
             });
         } else {
-            predictionRepository.insertUnrankedPredictionChoice(
+            predictionRepository.insertRankedPredictionChoice(
                     predictionChoiceUid,
                     predictionUid,
                     driverPrediction.getDriverUid(),
-                    createdAt);
+                    createdAt,
+                    1);
         }
     }
 
@@ -112,14 +113,14 @@ public class PredictionPersistenceService {
     @Transactional
     public Optional<DriverPrediction> selectRaceWeekendDriverPredictionForType(UUID raceWeekendUid, UUID userTeamUid, UUID predictionTypeUid) {
         return predictionRepository.selectExistingPrediction(predictionTypeUid, raceWeekendUid, userTeamUid)
-                .map(existingPrediction -> {
+                .map(prediction -> {
                     LOGGER.info("Found existing prediction with predictionUid=[{}], fetching ranked prediction choices",
-                            existingPrediction.predictionUid());
+                            prediction.predictionUid());
                     List<RankedDriverPrediction> rankedDriverPredictions = predictionRepository.selectDriverPredictionsForType(
                                     raceWeekendUid,
                                     userTeamUid,
                                     predictionTypeUid,
-                                    existingPrediction.predictionUid())
+                                    prediction.predictionUid())
                             .map(this::toModel)
                             .toList();
                     return new DriverPrediction(predictionTypeUid, userTeamUid, raceWeekendUid, rankedDriverPredictions);
