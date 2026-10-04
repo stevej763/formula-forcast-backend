@@ -1,1 +1,0 @@
-ALTER TABLE public.race_weekend ADD COLUMN round_number INTEGER NOT NULL DEFAULT 0;
