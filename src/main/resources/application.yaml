@@ -15,6 +15,7 @@ spring:
 
   flyway:
     default-schema: public
+    locations: classpath:db/schema
     url: jdbc:postgresql://localhost:5432/formulaforecast
     user: formulaforecast
     password: formulaforecast

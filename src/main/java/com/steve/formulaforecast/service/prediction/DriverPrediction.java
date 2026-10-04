@@ -11,12 +11,18 @@ public class DriverPrediction {
     private final UUID userTeamUid;
     private final UUID raceWeekendUid;
     private final List<RankedDriverPrediction> rankedDriverPredictions;
+    private final Integer points;
 
     public DriverPrediction(UUID predictionTypeUid, UUID userTeamUid, UUID raceWeekendUid, List<RankedDriverPrediction> rankedDriverPredictions) {
+        this(predictionTypeUid, userTeamUid, raceWeekendUid, rankedDriverPredictions, null);
+    }
+
+    public DriverPrediction(UUID predictionTypeUid, UUID userTeamUid, UUID raceWeekendUid, List<RankedDriverPrediction> rankedDriverPredictions, Integer points) {
         this.predictionTypeUid = predictionTypeUid;
         this.userTeamUid = userTeamUid;
         this.raceWeekendUid = raceWeekendUid;
         this.rankedDriverPredictions = rankedDriverPredictions;
+        this.points = points;
     }
 
     public UUID getPredictionTypeUid() {
@@ -33,5 +39,12 @@ public class DriverPrediction {
 
     public List<RankedDriverPrediction> getRankedDriverPredictions() {
         return rankedDriverPredictions;
+    }
+
+    /**
+     * Points scored by this prediction, or null until a result for its type has been entered.
+     */
+    public Integer getPoints() {
+        return points;
     }
 }

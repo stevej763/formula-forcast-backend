@@ -37,11 +37,6 @@ public class DriverDetailsService {
     }
 
     @Transactional
-    public List<DriverDetails> getAllDriversForCurrentSeason() {
-        return null;
-    }
-
-    @Transactional
     public void createDriver(DriverCreationDetails driverDetails) {
         UUID driverUid = UUID.randomUUID();
         driverDetailsPersistenceService.insertDriver(driverUid, driverDetails);

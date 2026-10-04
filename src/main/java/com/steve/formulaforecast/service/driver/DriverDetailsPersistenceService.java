@@ -2,7 +2,6 @@ package com.steve.formulaforecast.service.driver;
 
 import com.steve.formulaforecast.persistence.DriverRepository;
 import com.steve.formulaforecast.persistence.entity.driver.DriverEntity;
-import com.steve.formulaforecast.service.leaderboard.ChampionshipSeason;
 import com.steve.formulaforecast.service.leaderboard.ChampionshipSeasonService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +23,17 @@ public class DriverDetailsPersistenceService {
 
     @Transactional
     public List<DriverDetails> selectAllDrivers() {
-        return driverRepository.selectAllDrivers().map(this::toModel).toList();
+        return driverRepository.selectAllDrivers(currentSeasonUid()).map(this::toModel).toList();
     }
 
     @Transactional
     public List<DriverDetails> selectAllActiveDrivers() {
-        return driverRepository.selectAllActiveDrivers().map(this::toModel).toList();
+        return driverRepository.selectAllActiveDrivers(currentSeasonUid()).map(this::toModel).toList();
     }
 
     @Transactional
     public Optional<DriverDetails> getDriverByUid(UUID driverUid) {
-        return driverRepository.selectDriver(driverUid).map(this::toModel);
+        return driverRepository.selectDriver(driverUid, currentSeasonUid()).map(this::toModel);
     }
 
     private DriverDetails toModel(DriverEntity driverEntity) {
@@ -62,7 +61,10 @@ public class DriverDetailsPersistenceService {
     }
 
     public void updateDriverConstructor(UUID driverUid, UUID constructorUid) {
-        ChampionshipSeason currentSeason = championshipSeasonService.getCurrentSeason();
-        driverRepository.updateDriverConstructor(driverUid, constructorUid, currentSeason.getChampionshipSeasonUid());
+        driverRepository.updateDriverConstructor(driverUid, constructorUid, currentSeasonUid());
+    }
+
+    private UUID currentSeasonUid() {
+        return championshipSeasonService.getCurrentSeason().getChampionshipSeasonUid();
     }
 }

@@ -2,6 +2,7 @@ package com.steve.formulaforecast.persistence;
 
 import com.steve.formulaforecast.persistence.entity.leaderboard.ChampionshipLeaderboardEntity;
 import com.steve.formulaforecast.service.leaderboard.LeaderboardType;
+import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 
@@ -16,7 +17,7 @@ public interface ChampionshipLeaderboardRepository extends Repository<Championsh
             SELECT
                 championship_leaderboard.championship_leaderboard_uid,
                 championship_leaderboard.championship_leaderboard_name,
-                championship_leaderboard.created_at
+                championship_leaderboard.created_at,
                 championship_season.championship_season_uid,
                 championship_season.championship_name,
                 account.account_uid,
@@ -47,4 +48,23 @@ public interface ChampionshipLeaderboardRepository extends Repository<Championsh
             AND championship_season.championship_season_uid = :championshipSeasonUid
             """)
     Optional<ChampionshipLeaderboardEntity> selectDefaultGlobalLeaderboardForSeason(UUID championshipSeasonUid);
+
+    @Modifying
+    @Query("""
+            INSERT INTO championship_leaderboard (
+                championship_leaderboard_uid,
+                championship_season_id,
+                championship_leaderboard_name,
+                created_at,
+                leaderboard_type,
+                owner_account_id)
+            VALUES (
+                :leaderboardUid,
+                (SELECT championship_season.id FROM championship_season WHERE championship_season.championship_season_uid = :championshipSeasonUid),
+                :leaderboardName,
+                :createdAt,
+                'GLOBAL_DEFAULT',
+                NULL)
+            """)
+    int insertGlobalLeaderboard(UUID leaderboardUid, UUID championshipSeasonUid, String leaderboardName, Instant createdAt);
 }

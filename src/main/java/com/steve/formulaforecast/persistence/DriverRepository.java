@@ -13,63 +13,66 @@ import java.util.stream.Stream;
 
 public interface DriverRepository extends Repository<DriverEntity, Long> {
 
+    /**
+     * Every driver, with their constructor for the given season if they have one.
+     */
     @Query("""
             SELECT
-                driver_uid, 
-                first_name, 
-                last_name, 
-                nickname, 
-                date_of_birth, 
-                nationality, 
-                c.constructor_uid, 
+                driver_uid,
+                first_name,
+                last_name,
+                nickname,
+                date_of_birth,
+                nationality,
+                c.constructor_uid,
                 c.team_name
             FROM driver
-            LEFT JOIN (
-                SELECT DISTINCT ON (driver_id) *
-                FROM driver_constructor_mapping
-                ORDER BY driver_id, season_id DESC
-            ) dcm ON dcm.driver_id = driver.id
+            LEFT JOIN driver_constructor_mapping dcm ON dcm.driver_id = driver.id
+                AND dcm.championship_season_id = (SELECT id FROM championship_season WHERE championship_season_uid = :seasonUid)
             LEFT JOIN constructor c ON c.id = dcm.constructor_id
+            ORDER BY last_name, first_name
             """)
-    Stream<DriverEntity> selectAllDrivers();
+    Stream<DriverEntity> selectAllDrivers(UUID seasonUid);
 
+    /**
+     * Drivers on the grid for the given season.
+     */
     @Query("""
             SELECT
-                driver_uid, 
-                first_name, 
-                last_name, 
-                nickname, 
-                date_of_birth, 
-                nationality, 
-                c.constructor_uid, 
+                driver_uid,
+                first_name,
+                last_name,
+                nickname,
+                date_of_birth,
+                nationality,
+                c.constructor_uid,
                 c.team_name
             FROM driver
-            LEFT JOIN (
-                SELECT DISTINCT ON (driver_id) *
-                FROM driver_constructor_mapping
-                ORDER BY driver_id, season_id DESC
-            ) dcm ON dcm.driver_id = driver.id
-            LEFT JOIN constructor c ON c.id = dcm.constructor_id
-            WHERE c.constructor_uid IS NOT NULL
+            JOIN driver_constructor_mapping dcm ON dcm.driver_id = driver.id
+            JOIN championship_season season ON season.id = dcm.championship_season_id
+            JOIN constructor c ON c.id = dcm.constructor_id
+            WHERE season.championship_season_uid = :seasonUid
+            ORDER BY c.team_name, last_name
             """)
-    Stream<DriverEntity> selectAllActiveDrivers();
+    Stream<DriverEntity> selectAllActiveDrivers(UUID seasonUid);
 
     @Query("""
             SELECT
                 driver_uid,
-                first_name, 
-                last_name, 
-                nickname, 
-                date_of_birth, 
-                nationality, 
-                c.constructor_uid, 
+                first_name,
+                last_name,
+                nickname,
+                date_of_birth,
+                nationality,
+                c.constructor_uid,
                 c.team_name
             FROM driver
             LEFT JOIN driver_constructor_mapping dcm ON dcm.driver_id = driver.id
+                AND dcm.championship_season_id = (SELECT id FROM championship_season WHERE championship_season_uid = :seasonUid)
             LEFT JOIN constructor c ON c.id = dcm.constructor_id
             WHERE driver_uid = :driverUid
             """)
-    Optional<DriverEntity> selectDriver(UUID driverUid);
+    Optional<DriverEntity> selectDriver(UUID driverUid, UUID seasonUid);
 
     @Modifying
     @Query("""
@@ -90,7 +93,7 @@ public interface DriverRepository extends Repository<DriverEntity, Long> {
         INSERT INTO driver_constructor_mapping(
             driver_id,
             constructor_id,
-            season_id
+            championship_season_id
         ) VALUES (
             (SELECT id FROM driver WHERE driver_uid = :driverUid),
             (SELECT id FROM constructor WHERE constructor_uid = :constructorUid),

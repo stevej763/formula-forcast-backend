@@ -1,0 +1,1 @@
+ALTER TABLE public.championship_season ADD CONSTRAINT uk_championship_season_championship_year UNIQUE (championship_year);

@@ -1,6 +1,7 @@
 package com.steve.formulaforecast.service.raceweekends.model;
 
-import java.time.LocalDate;
+import java.time.Instant;
+import java.util.UUID;
 
-public record Qualifying(java.util.UUID qualifyingSessionUid, LocalDate sessionDate) {
+public record Qualifying(UUID qualifyingSessionUid, Instant startsAt) {
 }

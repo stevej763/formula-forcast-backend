@@ -5,19 +5,24 @@ import com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.time.InstantSource;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.steve.formulaforecast.TimeZones.LONDON_TIME;
+import static com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState.COMPLETE;
+import static com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState.LIVE;
+import static com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState.RACE_WEEK;
+import static com.steve.formulaforecast.service.raceweekends.model.RaceWeekendState.UPCOMING;
 
 @Service
 public class ActiveRaceWeekendUpdateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveRaceWeekendUpdateService.class);
+    private static final int RACE_WEEK_DAYS_BEFORE_START = 4;
 
     private final RaceWeekendPersistenceService raceWeekendPersistenceService;
     private final InstantSource instantSource;
@@ -27,84 +32,70 @@ public class ActiveRaceWeekendUpdateService {
         this.instantSource = instantSource;
     }
 
+    /**
+     * Reconciles every incomplete race weekend to the state its dates say it should be in.
+     * Only the earliest incomplete weekend may be RACE_WEEK or LIVE (enforced by unique indexes),
+     * so demotions are written before promotions.
+     */
+    @Transactional
     public void updateRaceWeekendStatus() {
-        // Check on the current race weekend. If there is one, check if it is the start of the weekend and set it live
-        Optional<RaceWeekend> currentRaceWeekend = raceWeekendPersistenceService.getCurrentRaceWeekend();
-        if (currentRaceWeekend.isPresent()) {
-            LOGGER.info("Found current race weekend, checking if it should be updated to LIVE");
-            updateCurrentRaceWeekend(currentRaceWeekend.get());
-            return;
+        LocalDate today = instantSource.instant().atZone(LONDON_TIME).toLocalDate();
+        List<RaceWeekend> incompleteRaceWeekends = raceWeekendPersistenceService.getIncompleteRaceWeekends();
+
+        List<StateChange> demotions = new ArrayList<>();
+        List<StateChange> promotions = new ArrayList<>();
+        boolean activeRaceWeekendAssigned = false;
+
+        for (RaceWeekend raceWeekend : incompleteRaceWeekends) {
+            RaceWeekendState targetState = targetState(raceWeekend, today);
+            if (isActive(targetState)) {
+                if (activeRaceWeekendAssigned) {
+                    targetState = UPCOMING;
+                }
+                activeRaceWeekendAssigned = true;
+            }
+
+            RaceWeekendState currentState = raceWeekend.getRaceWeekendStatus().getRaceWeekendState();
+            if (targetState != currentState) {
+                StateChange stateChange = new StateChange(raceWeekend, currentState, targetState);
+                (isActive(targetState) ? promotions : demotions).add(stateChange);
+            }
         }
 
-        // Check on the LIVE race weekend. If there is one, check if it has now finished and set it completed
-        Optional<RaceWeekend> liveRaceWeekend = raceWeekendPersistenceService.getLiveRaceWeekend();
-        if (liveRaceWeekend.isPresent()) {
-            LOGGER.info("Found LIVE race weekend [{}] checking if it has now finished", liveRaceWeekend.get().getRaceName());
-            updateLiveRaceWeekend(liveRaceWeekend.get());
-        } else {
-            checkForNextRaceWeekend();
-        }
-    }
+        demotions.forEach(this::apply);
+        promotions.forEach(this::apply);
 
-
-    private void updateLiveRaceWeekend(RaceWeekend raceWeekend) {
-        LocalDate currentDate = getCurrentDate();
-        if (currentDate.isAfter(raceWeekend.getRaceWeekendEndDate())) {
-            LOGGER.info("The LIVE race weekend [{}] is now over! Updating to completed", raceWeekend.getRaceName());
-            raceWeekendPersistenceService.updateRaceWeekendStatus(raceWeekend.getRaceWeekendUid(), RaceWeekendState.COMPLETE);
-            checkForNextRaceWeekend();
-        } else {
-            LOGGER.info("The LIVE race weekend [{}] is still ongoing. No action taken.", raceWeekend.getRaceName());
-        }
-    }
-
-    private void checkForNextRaceWeekend() {
-        LOGGER.info("Checking if the next upcoming weekend is this week");
-        // Check on the upcoming race weekend. If there is one, check if it is within 4 days and set it to RACE_WEEK
-        Optional<RaceWeekend> nextRaceWeekend = raceWeekendPersistenceService.getNextRaceWeekend();
-        nextRaceWeekend.ifPresentOrElse(this::updateNextRaceWeekendToCurrentWhenRaceWeek,
-                () -> LOGGER.info("No upcoming race weekends. Championship may have ended and the next season has not been set up yet."));
-    }
-
-    private void updateCurrentRaceWeekend(RaceWeekend raceWeekend) {
-        LocalDate currentDate = getCurrentDate();
-        boolean raceWeekendStartsToday = raceWeekend.getRaceWeekendStartDate().equals(currentDate);
-        boolean raceWeekendInProgress = raceWeekend.getRaceWeekendStartDate().isBefore(currentDate) &&
-                raceWeekend.getRaceWeekendEndDate().plusDays(1).isAfter(currentDate);
-
-        if (raceWeekendStartsToday || raceWeekendInProgress) {
-            LOGGER.info("It is the start of the race weekend! Updating current race weekend to LIVE status for [{}]", raceWeekend.getRaceName());
-            raceWeekendPersistenceService.updateRaceWeekendStatus(raceWeekend.getRaceWeekendUid(), RaceWeekendState.LIVE);
-        }
-        else {
-            LOGGER.info("The current race weekend starts on [{}] not updating to LIVE yet. No action taken.", raceWeekend.getRaceWeekendStartDate());
+        if (demotions.isEmpty() && promotions.isEmpty()) {
+            LOGGER.debug("Race weekend states are up to date for [{}]", today);
         }
     }
 
-    private void updateNextRaceWeekendToCurrentWhenRaceWeek(RaceWeekend raceWeekend) {
-        setRaceWeekendToCurrentRaceWeekend(raceWeekend);
-    }
-
-    private void setRaceWeekendToCurrentRaceWeekend(RaceWeekend raceWeekend) {
-        Instant now = instantSource.instant();
-        boolean isRaceWeekForUpcomingRace = daysBetween(now, raceWeekend) < 4;
-        if (isRaceWeekForUpcomingRace) {
-            LOGGER.info("Is within 4 days of next upcoming race weekend [{}]. Its race week!", raceWeekend.getRaceName());
-            raceWeekendPersistenceService.updateRaceWeekendStatus(raceWeekend.getRaceWeekendUid(), RaceWeekendState.RACE_WEEK);
-        } else {
-            LOGGER.info("Upcoming race weekend [{}] is not this week startDate=[{}]. No action taken.", raceWeekend.getRaceName(), raceWeekend.getRaceWeekendStartDate());
+    private RaceWeekendState targetState(RaceWeekend raceWeekend, LocalDate today) {
+        if (today.isAfter(raceWeekend.getRaceWeekendEndDate())) {
+            return COMPLETE;
         }
+        if (!today.isBefore(raceWeekend.getRaceWeekendStartDate())) {
+            return LIVE;
+        }
+        if (!today.isBefore(raceWeekend.getRaceWeekendStartDate().minusDays(RACE_WEEK_DAYS_BEFORE_START))) {
+            return RACE_WEEK;
+        }
+        return UPCOMING;
     }
 
-    private long daysBetween(Instant now, RaceWeekend raceWeekend) {
-        return Duration.between(now, getRaceWeekendStartDate(raceWeekend)).toDays();
+    private boolean isActive(RaceWeekendState raceWeekendState) {
+        return raceWeekendState == RACE_WEEK || raceWeekendState == LIVE;
     }
 
-    private Instant getRaceWeekendStartDate(RaceWeekend raceWeekend) {
-        return raceWeekend.getRaceWeekendStartDate().atStartOfDay().atZone(LONDON_TIME).toInstant();
+    private void apply(StateChange stateChange) {
+        LOGGER.info("Updating race weekend [{}] starting [{}] from [{}] to [{}]",
+                stateChange.raceWeekend().getRaceName(),
+                stateChange.raceWeekend().getRaceWeekendStartDate(),
+                stateChange.from(),
+                stateChange.to());
+        raceWeekendPersistenceService.updateRaceWeekendStatus(stateChange.raceWeekend().getRaceWeekendUid(), stateChange.to());
     }
 
-    private LocalDate getCurrentDate() {
-        return instantSource.instant().atZone(LONDON_TIME).toLocalDate();
+    private record StateChange(RaceWeekend raceWeekend, RaceWeekendState from, RaceWeekendState to) {
     }
 }

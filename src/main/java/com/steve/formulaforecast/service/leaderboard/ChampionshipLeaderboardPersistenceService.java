@@ -4,6 +4,7 @@ import com.steve.formulaforecast.persistence.ChampionshipLeaderboardRepository;
 import com.steve.formulaforecast.persistence.entity.leaderboard.ChampionshipLeaderboardEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,10 @@ public class ChampionshipLeaderboardPersistenceService {
 
     public Optional<ChampionshipLeaderboard> selectGlobalLeaderboardForSeason(UUID championshipSeasonUid) {
         return championshipLeaderboardRepository.selectDefaultGlobalLeaderboardForSeason(championshipSeasonUid).map(this::toModel);
+    }
+
+    public void createGlobalLeaderboard(UUID leaderboardUid, UUID championshipSeasonUid, String leaderboardName, Instant createdAt) {
+        championshipLeaderboardRepository.insertGlobalLeaderboard(leaderboardUid, championshipSeasonUid, leaderboardName, createdAt);
     }
 
     private ChampionshipLeaderboard toModel(ChampionshipLeaderboardEntity championshipLeaderboardEntity) {

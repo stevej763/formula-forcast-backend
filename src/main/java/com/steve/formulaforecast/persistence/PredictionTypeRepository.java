@@ -16,6 +16,7 @@ public interface PredictionTypeRepository extends Repository<PredictionTypeEntit
                 prediction_type,
                 description,
                 prediction_selection_type,
+                selection_count,
                 created_at
             FROM prediction_type
             ORDER BY id
@@ -28,6 +29,7 @@ public interface PredictionTypeRepository extends Repository<PredictionTypeEntit
                 prediction_type,
                 description,
                 prediction_selection_type,
+                selection_count,
                 created_at
             FROM prediction_type
             WHERE prediction_type_uid = :predictionTypeUid

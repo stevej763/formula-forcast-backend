@@ -36,6 +36,7 @@ public class PredictionTypesResource {
                 predictionTypeDetail.getPredictionTypeUid(),
                 predictionTypeDetail.getPredictionType().name(),
                 predictionTypeDetail.getPredictionSelectionType().name(),
+                predictionTypeDetail.getSelectionCount(),
                 predictionTypeDetail.getDescription(),
                 predictionTypeDetail.getCreatedAt()
         );

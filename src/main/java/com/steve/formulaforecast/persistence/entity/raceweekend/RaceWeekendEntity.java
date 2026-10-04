@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public record RaceWeekendEntity(
         UUID raceWeekendUid,
+        int roundNumber,
         LocalDate raceWeekendStartDate,
         LocalDate raceWeekendEndDate,
         RaceName raceName,

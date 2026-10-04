@@ -9,18 +9,21 @@ public class LeaderboardEntry {
     private final String teamName;
     private final String teamColour;
     private final UUID championshipLeaderboardUid;
+    private final long points;
 
     public LeaderboardEntry(
             UUID championshipLeaderboardEntrantUid,
             UUID teamUid,
             String teamName,
             String teamColour,
-            UUID championshipLeaderboardUid) {
+            UUID championshipLeaderboardUid,
+            long points) {
         this.championshipLeaderboardEntrantUid = championshipLeaderboardEntrantUid;
         this.teamUid = teamUid;
         this.teamName = teamName;
         this.teamColour = teamColour;
         this.championshipLeaderboardUid = championshipLeaderboardUid;
+        this.points = points;
     }
 
     public UUID getChampionshipLeaderboardEntrantUid() {
@@ -41,5 +44,9 @@ public class LeaderboardEntry {
 
     public UUID getChampionshipLeaderboardUid() {
         return championshipLeaderboardUid;
+    }
+
+    public long getPoints() {
+        return points;
     }
 }

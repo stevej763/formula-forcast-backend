@@ -7,6 +7,7 @@ public record LeaderboardEntryEntity(
         UUID championshipLeaderboardUid,
         UUID teamUid,
         String teamName,
-        String teamColour
+        String teamColour,
+        long points
 ) {
 }

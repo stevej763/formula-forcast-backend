@@ -9,6 +9,7 @@ public class PredictionTypeDetail {
     private final PredictionType predictionType;
     private final String description;
     private final PredictionSelectionType predictionSelectionType;
+    private final int selectionCount;
     private final Instant createdAt;
 
     public PredictionTypeDetail(
@@ -16,11 +17,13 @@ public class PredictionTypeDetail {
             PredictionType predictionType,
             String description,
             PredictionSelectionType predictionSelectionType,
+            int selectionCount,
             Instant createdAt) {
         this.predictionTypeUid = predictionTypeUid;
         this.predictionType = predictionType;
         this.description = description;
         this.predictionSelectionType = predictionSelectionType;
+        this.selectionCount = selectionCount;
         this.createdAt = createdAt;
     }
 
@@ -38,6 +41,13 @@ public class PredictionTypeDetail {
 
     public PredictionSelectionType getPredictionSelectionType() {
         return predictionSelectionType;
+    }
+
+    /**
+     * How many ranked picks a prediction of this type takes, e.g. 3 for a top three.
+     */
+    public int getSelectionCount() {
+        return selectionCount;
     }
 
     public Instant getCreatedAt() {

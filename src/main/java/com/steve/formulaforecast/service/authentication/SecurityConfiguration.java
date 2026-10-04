@@ -48,6 +48,7 @@ public class SecurityConfiguration {
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()   // login, register endpoints
+                        .requestMatchers("/error").permitAll()            // let unhandled exceptions surface as 500, not 403
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

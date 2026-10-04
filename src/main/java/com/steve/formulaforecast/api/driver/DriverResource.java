@@ -54,13 +54,7 @@ public class DriverResource {
         driverDetailsService.updateDriverConstructor(driverConstructorRequest.driverUid(), driverConstructorRequest.constructorUid());
     }
 
-    @GetMapping("/current-season")
-    public ResponseEntity<DriverDetailsResponse> getCurrentSeasonDrivers() {
-        List<DriverDetailResponse> driverDetailResponses = driverDetailsService.getAllDriversForCurrentSeason().stream().map(this::toDto).toList();
-        return ResponseEntity.ok(new DriverDetailsResponse(driverDetailResponses));
-    }
-
-    @GetMapping("/{driverUids}")
+    @GetMapping("/{driverUid}")
     public ResponseEntity<DriverDetailResponse> getDriver(@PathVariable UUID driverUid) {
         Optional<DriverDetailResponse> driverDetailResponses = driverDetailsService.getDriver(driverUid).map(this::toDto);
         return ResponseEntity.of(driverDetailResponses);

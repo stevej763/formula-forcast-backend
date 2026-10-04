@@ -32,6 +32,11 @@ public class LeaderboardEntryPersistenceService {
         }
     }
 
+    public void addAllTeamsToLeaderboard(UUID leaderboardUid) {
+        int inserted = leaderboardEntryRepository.addAllTeamsToLeaderboard(leaderboardUid, instantSource.instant());
+        LOGGER.info("Added {} existing teams to leaderboard {}", inserted, leaderboardUid);
+    }
+
     public List<LeaderboardEntry> getTeamsInLeaderboard(UUID leaderboardUid) {
         return leaderboardEntryRepository.getTeamsInLeaderboard(leaderboardUid).map(this::toModel).toList();
     }
@@ -42,6 +47,7 @@ public class LeaderboardEntryPersistenceService {
                 leaderboardEntryEntity.teamUid(),
                 leaderboardEntryEntity.teamName(),
                 leaderboardEntryEntity.teamColour(),
-                leaderboardEntryEntity.championshipLeaderboardUid());
+                leaderboardEntryEntity.championshipLeaderboardUid(),
+                leaderboardEntryEntity.points());
     }
 }

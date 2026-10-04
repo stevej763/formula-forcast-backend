@@ -1,7 +1,7 @@
 package com.steve.formulaforecast.service.raceweekends.model;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.UUID;
 
-public record PracticeSession(UUID practiceSessionUid, LocalDate sessionDate, int practiceSessionNumber) {
+public record PracticeSession(UUID practiceSessionUid, Instant startsAt, int practiceSessionNumber) {
 }

@@ -25,5 +25,6 @@ public enum RaceName {
     BRAZIL,
     LAS_VEGAS,
     QATAR,
+    MADRID,
     ABU_DHABI
 }

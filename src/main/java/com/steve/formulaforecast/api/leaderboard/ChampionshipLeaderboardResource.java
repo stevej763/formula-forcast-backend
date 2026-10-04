@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -37,17 +38,33 @@ public class ChampionshipLeaderboardResource {
     public ResponseEntity<GlobalChampionshipLeaderboardResponse> getCurrentGlobalLeaderboard() {
         ChampionshipLeaderboardWithEntries currentGlobalLeaderboard = leaderboardService.getCurrentGlobalLeaderboard();
         ChampionshipLeaderboardDto championshipLeaderboardDto = toDto(currentGlobalLeaderboard.getChampionshipLeaderboard());
-        List<LeaderboardEntryDto> entries = currentGlobalLeaderboard.getEntries().stream().map(leaderboardEntry -> toDto(leaderboardEntry)).toList();
+        List<LeaderboardEntryDto> entries = toStandings(currentGlobalLeaderboard.getEntries());
         return ResponseEntity.ok(new GlobalChampionshipLeaderboardResponse(championshipLeaderboardDto, currentGlobalLeaderboard.getEntries().size(), entries));
     }
 
-    private LeaderboardEntryDto toDto(LeaderboardEntry leaderboardEntry) {
+    /**
+     * Positions entries already sorted by points. Tied teams share a position and the next one skips, e.g. 1, 2, 2, 4.
+     */
+    private List<LeaderboardEntryDto> toStandings(List<LeaderboardEntry> entries) {
+        List<LeaderboardEntryDto> standings = new ArrayList<>();
+        for (int i = 0; i < entries.size(); i++) {
+            LeaderboardEntry entry = entries.get(i);
+            boolean tiedWithPrevious = i > 0 && entries.get(i - 1).getPoints() == entry.getPoints();
+            int position = tiedWithPrevious ? standings.get(i - 1).position() : i + 1;
+            standings.add(toDto(entry, position));
+        }
+        return standings;
+    }
+
+    private LeaderboardEntryDto toDto(LeaderboardEntry leaderboardEntry, int position) {
         return new LeaderboardEntryDto(
                 leaderboardEntry.getChampionshipLeaderboardEntrantUid(),
                 leaderboardEntry.getTeamUid(),
                 leaderboardEntry.getTeamName(),
                 leaderboardEntry.getTeamColour(),
-                leaderboardEntry.getChampionshipLeaderboardUid());
+                leaderboardEntry.getChampionshipLeaderboardUid(),
+                position,
+                leaderboardEntry.getPoints());
     }
 
     private ChampionshipLeaderboardDto toDto(ChampionshipLeaderboard championshipLeaderboard) {

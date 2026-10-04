@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ChampionshipSeasonPersistenceService {
@@ -19,10 +21,15 @@ public class ChampionshipSeasonPersistenceService {
         this.championshipSeasonStatements = championshipSeasonStatements;
     }
 
-    public ChampionshipSeason getChampionshipSeason(String year) {
+    public Optional<ChampionshipSeason> getChampionshipSeason(String year) {
         return championshipSeasonStatements.getChampionshipSeason(year)
-                .map(this::toModel)
-                .orElseThrow(() -> new IllegalStateException("No championship season found"));
+                .map(this::toModel);
+    }
+
+    public boolean createSeason(UUID championshipSeasonUid, String year, String name) {
+        int inserted = championshipSeasonStatements.insertChampionshipSeason(championshipSeasonUid, year, name);
+        LOGGER.info("Inserted championship season year=[{}] rows affected=[{}]", year, inserted);
+        return inserted > 0;
     }
 
     public List<ChampionshipSeason> selectAllSeasons() {

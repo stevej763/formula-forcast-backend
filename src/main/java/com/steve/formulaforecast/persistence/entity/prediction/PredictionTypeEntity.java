@@ -11,6 +11,7 @@ public record PredictionTypeEntity(
         PredictionType predictionType,
         String description,
         PredictionSelectionType predictionSelectionType,
+        int selectionCount,
         Instant createdAt
 ) {
 

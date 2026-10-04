@@ -29,6 +29,7 @@ public class PredictionTypePersistenceService {
                 predictionTypeEntity.predictionType(),
                 predictionTypeEntity.description(),
                 predictionTypeEntity.predictionSelectionType(),
+                predictionTypeEntity.selectionCount(),
                 predictionTypeEntity.createdAt());
     }
 

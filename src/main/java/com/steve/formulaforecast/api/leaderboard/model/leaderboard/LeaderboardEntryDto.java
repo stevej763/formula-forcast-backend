@@ -7,5 +7,7 @@ public record LeaderboardEntryDto(
         UUID teamUid,
         String teamName,
         String teamColour,
-        UUID championshipLeaderboardUid) {
+        UUID championshipLeaderboardUid,
+        int position,
+        long points) {
 }

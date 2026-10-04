@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.InstantSource;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,107 +28,49 @@ public class PredictionPersistenceService {
         this.instantSource = instantSource;
     }
 
+    /**
+     * Saves a team's picks for a prediction type, replacing any picks it already made for that weekend.
+     */
     @Transactional
-    public void saveSingleDriverPrediction(SingleDriverPredication driverPrediction) {
-        UUID predictionUid = UUID.randomUUID();
-        UUID predictionChoiceUid = UUID.randomUUID();
+    public void saveDriverPrediction(DriverPrediction driverPrediction) {
         Instant createdAt = instantSource.instant();
-        int inserted = predictionRepository.insertPrediction(
-                predictionUid,
+        predictionRepository.insertPrediction(
+                UUID.randomUUID(),
                 driverPrediction.getPredictionTypeUid(),
                 driverPrediction.getRaceWeekendUid(),
                 driverPrediction.getUserTeamUid(),
                 createdAt);
-        if (inserted == 0) {
-            LOGGER.info("Prediction for user team=[{}] for raceWeekend=[{}] for type=[{}] already exists, updating existing prediction",
-                    driverPrediction.getUserTeamUid(), driverPrediction.getRaceWeekendUid(), driverPrediction.getPredictionTypeUid());
-            predictionRepository.selectExistingPrediction(
-                    driverPrediction.getPredictionTypeUid(),
-                    driverPrediction.getRaceWeekendUid(),
-                    driverPrediction.getUserTeamUid()
-            ).ifPresent(existingPrediction -> {
-                LOGGER.info("Found existing prediction with predictionUid=[{}], updating prediction choice",
-                        existingPrediction.predictionUid());
-                updatePredictionChoice(driverPrediction, existingPrediction, createdAt);
-            });
-        } else {
-            predictionRepository.insertRankedPredictionChoice(
-                    predictionChoiceUid,
-                    predictionUid,
-                    driverPrediction.getDriverUid(),
-                    createdAt,
-                    1);
-        }
-    }
+        PredictionDetailEntity prediction = predictionRepository.selectExistingPrediction(
+                        driverPrediction.getPredictionTypeUid(),
+                        driverPrediction.getRaceWeekendUid(),
+                        driverPrediction.getUserTeamUid())
+                .orElseThrow();
+        LOGGER.info("Saving picks for user team=[{}] for raceWeekend=[{}] on prediction=[{}]",
+                driverPrediction.getUserTeamUid(), driverPrediction.getRaceWeekendUid(), prediction.predictionUid());
 
-    private void updatePredictionChoice(SingleDriverPredication driverPrediction, PredictionDetailEntity existingPrediction, Instant createdAt) {
-        int inserted = predictionRepository.updatePredictionChoice(
-                existingPrediction.predictionUid(),
-                driverPrediction.getDriverUid(),
-                createdAt);
-        LOGGER.info("Updated prediction choice, rows affected=[{}]", inserted);
-    }
-
-    public void saveRankedDriverPrediction(DriverPrediction driverPrediction) {
-        UUID predictionUid = UUID.randomUUID();
-        Instant createdAt = instantSource.instant();
-        int inserted = predictionRepository.insertPrediction(
-                predictionUid,
-                driverPrediction.getPredictionTypeUid(),
-                driverPrediction.getRaceWeekendUid(),
-                driverPrediction.getUserTeamUid(),
-                createdAt);
-        if (inserted == 0) {
-            LOGGER.info("Prediction for user team=[{}] for raceWeekend=[{}] for type=[{}] already exists, updating drivers and positions",
-                    driverPrediction.getUserTeamUid(), driverPrediction.getRaceWeekendUid(), driverPrediction.getPredictionTypeUid());
-            predictionRepository.selectExistingPrediction(
-                    driverPrediction.getPredictionTypeUid(),
-                    driverPrediction.getRaceWeekendUid(),
-                    driverPrediction.getUserTeamUid()
-            ).ifPresent(existingPrediction -> {
-                LOGGER.info("Found existing prediction with predictionUid=[{}], updating ranked prediction choices",
-                        existingPrediction.predictionUid());
-                driverPrediction.getRankedDriverPredictions().forEach((rankedDriverPrediction) -> {
-                    predictionRepository.updateRankedPredictionChoice(
-                            existingPrediction.predictionUid(),
-                            rankedDriverPrediction.getDriverUid(),
-                            createdAt,
-                            rankedDriverPrediction.getRank());
-                });
-            });
-        } else {
-            driverPrediction.getRankedDriverPredictions().forEach((rankedDriverPrediction) -> {
-                UUID predictionChoiceUid = UUID.randomUUID();
-                predictionRepository.insertRankedPredictionChoice(
-                        predictionChoiceUid,
-                        predictionUid,
+        // Replace rather than update the picks, so drivers can swap positions without breaking the one driver per prediction constraint
+        predictionRepository.deletePredictionChoices(prediction.predictionUid());
+        driverPrediction.getRankedDriverPredictions().forEach(rankedDriverPrediction ->
+                predictionRepository.insertPredictionChoice(
+                        UUID.randomUUID(),
+                        prediction.predictionUid(),
                         rankedDriverPrediction.getDriverUid(),
-                        createdAt,
-                        rankedDriverPrediction.getRank());
-            });
-        }
+                        rankedDriverPrediction.getRank(),
+                        createdAt));
     }
 
     @Transactional
     public Optional<DriverPrediction> selectRaceWeekendDriverPredictionForType(UUID raceWeekendUid, UUID userTeamUid, UUID predictionTypeUid) {
         return predictionRepository.selectExistingPrediction(predictionTypeUid, raceWeekendUid, userTeamUid)
                 .map(prediction -> {
-                    LOGGER.info("Found existing prediction with predictionUid=[{}], fetching ranked prediction choices",
-                            prediction.predictionUid());
-                    List<RankedDriverPrediction> rankedDriverPredictions = predictionRepository.selectDriverPredictionsForType(
-                                    raceWeekendUid,
-                                    userTeamUid,
-                                    predictionTypeUid,
-                                    prediction.predictionUid())
+                    List<RankedDriverPrediction> rankedDriverPredictions = predictionRepository.selectPredictionChoices(prediction.predictionUid())
                             .map(this::toModel)
                             .toList();
-                    return new DriverPrediction(predictionTypeUid, userTeamUid, raceWeekendUid, rankedDriverPredictions);
+                    return new DriverPrediction(predictionTypeUid, userTeamUid, raceWeekendUid, rankedDriverPredictions, prediction.points());
                 });
     }
 
     private RankedDriverPrediction toModel(DriverPredictionEntity driverPredictionEntity) {
-        return new RankedDriverPrediction(
-                driverPredictionEntity.driverUid(),
-                Objects.isNull(driverPredictionEntity.rank()) ? 1 :driverPredictionEntity.rank().intValue());
+        return new RankedDriverPrediction(driverPredictionEntity.driverUid(), driverPredictionEntity.rank());
     }
 }

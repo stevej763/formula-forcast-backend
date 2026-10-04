@@ -2,6 +2,7 @@ package com.steve.formulaforecast.service.raceweekends.model;
 
 import com.neovisionaries.i18n.CountryCode;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.UUID;
 public class RaceWeekend {
 
     private final UUID raceWeekendUid;
+    private final int roundNumber;
     private final RaceName raceName;
     private final CountryCode raceLocation;
     private final List<PracticeSession> practiceSessions;
@@ -22,6 +24,7 @@ public class RaceWeekend {
 
     public RaceWeekend(
             UUID raceWeekendUid,
+            int roundNumber,
             RaceName raceName,
             CountryCode raceLocation,
             List<PracticeSession> practiceSessions,
@@ -32,6 +35,7 @@ public class RaceWeekend {
             LocalDate raceWeekendEndDate,
             RaceWeekendStatus raceWeekendStatus) {
         this.raceWeekendUid = raceWeekendUid;
+        this.roundNumber = roundNumber;
         this.raceName = raceName;
         this.raceLocation = raceLocation;
         this.practiceSessions = practiceSessions;
@@ -45,6 +49,10 @@ public class RaceWeekend {
 
     public UUID getRaceWeekendUid() {
         return raceWeekendUid;
+    }
+
+    public int getRoundNumber() {
+        return roundNumber;
     }
 
     public RaceName getRaceName() {
@@ -81,5 +89,12 @@ public class RaceWeekend {
 
     public LocalDate getRaceWeekendEndDate() {
         return raceWeekendEndDate;
+    }
+
+    /**
+     * Picks for every prediction type lock when qualifying starts.
+     */
+    public Instant getPredictionsLockAt() {
+        return qualifying.startsAt();
     }
 }
